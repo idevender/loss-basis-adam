@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# Environments
+.venv/
+venv/
+env/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Data (see README for where to obtain the public datasets)
+data/
+*.mat
+*.npy
+*.npz
+*.pkl
+*.pth
+*.pt
+
+# Experiment logs and results
+*.out
+*.jsonl
+results/
+runs/
+logs/
+wandb/
+
+# Figure outputs (regenerate with figures/make_figures.py)
+figures/*.pdf
+figures/*.png
