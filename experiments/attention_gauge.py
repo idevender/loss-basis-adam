@@ -149,8 +149,19 @@ class Trainer:
         self.mom = [torch.zeros_like(p) for p in self.params]
         self.v = [torch.zeros_like(p) for p in self.params]
         self.t = 0
-        self.muon_mask = [p.dim() == 2 and p.shape[0] != P + 1 and p.shape[0] != P
-                          for p in self.params]
+        # Muon orthogonalises the hidden weight matrices - the four attention
+        # projections and the two MLP layers per block. Embedding, positions,
+        # RMSNorm gains and the readout head stay on Adam.
+        muon_ids = set()
+        for layer in model.layers:
+            att = layer["attn"]
+            for w in (att.q_proj.weight, att.k_proj.weight,
+                      att.v_proj.weight, att.o_proj.weight):
+                muon_ids.add(id(w))
+            for m in layer["mlp"]:
+                if isinstance(m, nn.Linear):
+                    muon_ids.add(id(m.weight))
+        self.muon_mask = [id(p) in muon_ids for p in self.params]
 
     def step(self):
         self.t += 1
