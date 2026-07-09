@@ -30,7 +30,8 @@ data/
 *.jsonl
 results/
 runs/
-logs/
+logs/*
+!logs/attention_gauge_cpu.txt
 wandb/
 
 # Figure outputs (regenerate with figures/make_figures.py)

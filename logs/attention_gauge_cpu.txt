@@ -1,0 +1,41 @@
+================================================================================================================
+ATTENTION GAUGE | mod-47 add | 2L 4H d64 (no qk-norm) | full-batch, deterministic CPU | 1500 steps
+Two GAUGE-EQUIVALENT inits (identical function). Equivariant optimizers must stay identical;
+Adam is predicted to SPLIT. 'drift' = rel logit dist on val; 'qk' = rel QK^T product dist.
+================================================================================================================
+
+                  adam lr=0.001 | per-coordinate  -> predicted SPLIT
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 1.8e-07  3.6e-03  3.7e-02  3.4e-01  6.5e-01  7.2e-01  7.4e-01  7.6e-01  7.7e-01
+        QK^T:  2.7e-07  1.6e-02  8.9e-02  3.3e-01  4.7e-01  5.3e-01  5.5e-01  5.6e-01  5.6e-01
+        final: val acc copy1=0.4020  copy2=0.4027  |Δacc|=0.0008  train loss=0.000
+
+       adam [A=I ctrl] lr=0.001 | A=I control     -> float floor
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00
+        QK^T:  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00  0.0e+00
+        final: val acc copy1=0.4020  copy2=0.4020  |Δacc|=0.0000  train loss=0.000
+
+                   sgd lr=0.5 | equivariant     -> predicted identical
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 1.8e-07  2.9e-07  3.3e-07  1.3e-05  3.7e-05  2.4e-05  2.1e-05  2.1e-05  2.0e-05
+        QK^T:  2.7e-07  2.8e-07  3.1e-07  3.5e-06  7.9e-06  7.0e-06  6.8e-06  6.9e-06  7.1e-06
+        final: val acc copy1=0.4035  copy2=0.4035  |Δacc|=0.0000  train loss=0.000
+
+            adam_p0rms lr=0.003 | shared scalar   -> predicted identical (the dial fixes Adam)
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 1.8e-07  1.6e-07  3.1e-07  5.8e-06  4.1e-06  3.8e-06  4.0e-06  4.1e-06  4.3e-06
+        QK^T:  2.7e-07  2.8e-07  3.1e-07  8.1e-07  1.5e-06  1.7e-06  1.9e-06  2.1e-06  2.6e-06
+        final: val acc copy1=0.4035  copy2=0.4035  |Δacc|=0.0000  train loss=0.000
+
+                  muon lr=0.02 | msign equivariant-> predicted identical
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 1.8e-07  2.2e-07  4.9e-07  3.9e-06  2.3e-02  3.2e-01  5.8e-01  7.5e-01  8.5e-01
+        QK^T:  2.7e-07  1.4e-06  4.7e-06  6.0e-06  6.8e-03  2.3e-01  4.4e-01  6.2e-01  8.0e-01
+        final: val acc copy1=0.4035  copy2=0.4027  |Δacc|=0.0008  train loss=0.000
+
+READ: if Adam's drift is orders of magnitude above its A=I control AND above SGD/Muon/scalar-
+Adam, then what Adam learns in attention depends on an invisible basis choice - the gauge-
+breaking mechanism operates in TRANSFORMERS, not just synthetic matrix problems.
+
+[done in 5.2 min]
