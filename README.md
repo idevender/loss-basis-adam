@@ -1,15 +1,15 @@
 # The Loss Does Not See the Basis, but Adam Does
 
-Code for the paper **"The Loss Does Not See the Basis, but Adam Does: Gauge Equivariance
-Decides the Implicit Bias on Factored Models"** (Devender Singh).
+Code for the paper **"The Loss Does Not See the Basis, but Adam Does: Orthogonal Gauge
+Equivariance Predicts Implicit Bias in Factored Models"** (Devender Singh).
 
 A factored loss `L(UV^T)` is invariant under the gauge action `(U, V) -> (UQ, VQ)` for
-orthogonal `Q`. This repository contains the experiments showing that an optimizer's implicit
-bias on such models is decided by whether its update is *equivariant* to this action:
+orthogonal `Q`. This repository contains experiments assessing whether an optimizer's implicit
+bias on such models is related to equivariance under this action. In the reported protocols,
 gauge-equivariant methods (gradient descent, momentum, shared-scalar Adam, Muon, Shampoo)
-preserve gradient descent's low-rank bias, while coordinate-wise methods (Adam, RMSProp, Lion,
-signum, Adafactor) read the arbitrary basis and destroy it. The same symmetry lives in every
-attention head, and the mechanism is used constructively to repair our own optimizer, FlowAdam.
+preserve gradient descent's low-rank bias, whereas coordinate-wise methods (Adam, RMSProp, Lion,
+signum, Adafactor) depend on the arbitrary factor basis. The same symmetry appears in attention
+heads and motivates a gauge-preserving variant of FlowAdam.
 
 ## Installation
 
@@ -20,8 +20,8 @@ pip install -e .        # installs the flowadam package
 pip install -r requirements.txt
 ```
 
-Requires Python 3.9+. The CPU experiments run in minutes; the H100 replication ladder
-(`experiments/nibi/`) needs a GPU.
+Requires Python 3.9+. Individual CPU experiments run in minutes; the complete suite takes longer
+and depends on hardware. The replication ladder (`experiments/nibi/`) is intended for a GPU.
 
 ## The optimizer
 
@@ -29,15 +29,17 @@ Requires Python 3.9+. The CPU experiments run in minutes; the H100 replication l
 
 - `precond_power` (the anisotropy dial `p`): the Adam denominator is
   `denom_i = s_i^p * sbar^(1 - p)` with `s_i = sqrt(vhat_i)` and `sbar` a shared scalar.
-  `p=1` is standard per-coordinate Adam; `p=0` is a gauge-invariant shared-scalar denominator.
+  `p=1` is standard per-coordinate Adam; `p=0` is an exactly gauge-invariant shared-scalar
+  denominator only when `precond_scalar='rms'`.
 - `precond_scalar`: the shared-scalar convention, `'rms'` (exactly gauge-invariant at `p=0`)
-  or `'geomean'` (the legacy convention).
+  or `'geomean'` (a legacy convention that is not exactly gauge-invariant at finite step size).
 
 ```python
 import torch
 from flowadam import FlowAdam
 
 model = torch.nn.Linear(64, 64)
+x = torch.randn(8, 64)
 opt = FlowAdam(model.parameters(), lr=1e-3,
                precond_power=0.0, precond_scalar='rms',   # the gauge-invariant dial endpoint
                clip_mode='globalnorm', clip_norm_c=10.0)
@@ -50,6 +52,10 @@ def closure():
 
 opt.step(closure)   # FlowAdam requires a closure
 ```
+
+For an exactly gauge-invariant `p=0` run, pass `precond_scalar='rms'` explicitly. The package
+default remains `'geomean'` for backwards compatibility; it should not be used for an exact
+finite-step equivariance claim. FlowAdam currently accepts one parameter group.
 
 ## Repository layout
 
@@ -72,7 +78,7 @@ python optimizer_zoo_bias.py
 | Script | Paper | What it shows |
 | --- | --- | --- |
 | `optimizer_zoo_bias.py` | Section 5 | Optimizer-zoo map: the equivariant/coordinate-wise split in recovery |
-| `zoo_lr_sensitivity.py` | Section 5.1, App C2 | The split holds at every learning rate (flow-limit reading) |
+| `zoo_lr_sensitivity.py` | Section 5.1, App C2 | Learning-rate curves for the optimizer-zoo comparison |
 | `zoo_decay_control.py` | App C1 | Schedule symmetrization: split survives cosine-for-all |
 | `zoo_init_scale.py` | App C3 | Split persists across initialization scales |
 | `zoo_size_check.py` | Section 5 | The ordering survives a second size and rank |
@@ -83,14 +89,18 @@ python optimizer_zoo_bias.py
 | `phase_diagram_decay_control.py` | App C1 | Schedule control for the phase diagram |
 | `signum_c9_audit.py` | App C9 | Recovery without equivariance: annealed sign descent |
 | `restoration_probe.py` | (shared) | The matrix-sensing testbed used across the sensing experiments |
-| `attention_gauge.py` | Section 7 | The gauge in an attention head: Adam's twins split, equivariant twins do not |
+| `attention_gauge.py` | Section 7 | Attention-gauge onset: Adam splits after one step; SGD/scalar-Adam stay at numerical scale, while Muon gauge and noise twins can both diverge under numerical chaos |
 | `attention_gauge_multiseed.py` | App C4 | Attention gauge across seeds, gauge draws, and noise scales |
-| `hyperspectral_completion.py` | Section 9 | Indian Pines loaders and CPU smoke test |
-| `hyperspectral_wilson_v2.py` | Section 9 | Matched-train-loss protocol on real data |
-| `hyperspectral_wilson_v3.py` | Section 9, App C5 | Matched-loss with train-only learning-rate selection |
+| `hyperspectral_completion.py` | Legacy smoke test | Indian Pines loader and exploratory CPU smoke test; configuration selection is test-informed and it is not a paper result |
+| `hyperspectral_wilson_v2.py` | Legacy protocol | Earlier fixed-learning-rate matched-loss protocol, retained for comparison |
+| `hyperspectral_wilson_v3.py` | Section 9, App C5 | Canonical CPU Indian Pines reproduction: matched loss with train-only learning-rate selection |
 | `flowadam_upgrade.py` | Section 10 | FlowAdam-p: the flow plus the softened preconditioner |
 | `flowadam_upgrade_rms.py` | Section 10 | FlowAdam-p numbers under the RMS scalar |
 | `flowadam_p_interp_control.py` | App C7 | Interpolation control (not an early-stopping artifact) |
+
+For the paper's CPU real-data protocol, use `hyperspectral_wilson_v3.py`. The two legacy scripts
+remain for loader coverage and protocol comparison; they are not the source of the paper's reported
+real-data numbers.
 
 ### The H100 replication ladder (Appendix C8)
 
@@ -99,13 +109,19 @@ protocols). Run the drivers, then aggregate:
 
 ```bash
 cd experiments/nibi
-python zoo_ladder.py            # optimizer-zoo ladder across sizes/ranks (the C8 table)
-python phase_fine.py           # spectral-tail phase diagram at scale
-python dial_scale.py           # the anisotropy dial and FlowAdam-p at scale
-python attention_suite.py --task mod
-python pavia.py --dataset paviau --mat /path/to/PaviaU.mat
+mkdir -p ../nibi_results
+python zoo_ladder.py --n 40 --out ../nibi_results/zoo_n40.jsonl
+python phase_fine.py --out ../nibi_results/phase_n40.jsonl
+python dial_scale.py --out ../nibi_results/dial_n40.jsonl --flowadam
+python attention_suite.py --task mod --out ../nibi_results/attn_mod.jsonl
+python pavia.py --dataset paviau --mat /path/to/PaviaU.mat \
+  --densities 0.28,0.46 --out ../nibi_results/pavia_paviau.jsonl
 python collect.py --dir ../nibi_results --md ../nibi_results/SUMMARY.md
 ```
+
+Run additional ladder sizes with separate files, for example
+`python zoo_ladder.py --n 128 --out ../nibi_results/zoo_n128.jsonl`. For Indian Pines, use
+`--dataset indianpines` and the paper densities `--densities 0.15,0.25`.
 
 ### Figures
 
@@ -114,7 +130,10 @@ cd figures
 python make_figures.py
 ```
 
-The plotted numbers are the final experiment outputs, embedded in the script.
+The script writes vector PDFs directly to `figures/`. Its attention-gauge curves are a checked
+snapshot of the current CPU runs recorded in `logs/attention_gauge_cpu.txt` and
+`logs/attention_gauge_noise_cpu.txt`; regenerate the logs and figure together whenever the attention
+implementation changes.
 
 ## Data
 
@@ -135,8 +154,8 @@ hyperspectral scenes and a character-level text corpus, none of which are shippe
 
 ```bibtex
 @article{singh2026gauge,
-  title  = {The Loss Does Not See the Basis, but Adam Does: Gauge Equivariance
-            Decides the Implicit Bias on Factored Models},
+  title  = {The Loss Does Not See the Basis, but Adam Does: Orthogonal Gauge
+            Equivariance Predicts Implicit Bias in Factored Models},
   author = {Singh, Devender},
   year   = {2026},
   note   = {Preprint}

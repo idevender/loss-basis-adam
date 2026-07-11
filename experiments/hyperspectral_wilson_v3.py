@@ -1,5 +1,5 @@
 """
-Hyperspectral matched-loss protocol with train-only lr selection (Section 9, Appendix C5).
+Canonical CPU hyperspectral matched-loss protocol with train-only lr selection (Section 9, Appendix C5).
 
 Hardens the matched-loss demo against two confounds: (a) learning rates are selected per method and
 density by a train-only rule (the lr that reaches the deepest matched train level, ties broken by

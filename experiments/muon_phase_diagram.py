@@ -145,8 +145,8 @@ def main():
     print("=" * 112, flush=True)
     print(f"MUON PHASE DIAGRAM | sensing {N}x{N} head-rank {R_STAR} + orthogonal tail | m={M} (2x dof3) "
           f"init={INIT} wd=0 | {len(SEEDS)} seeds | tau^2 = tail energy fraction", flush=True)
-    print("Prediction: Muon best at tau=0, deteriorates FASTEST with tau (spectral equalization pumps the", flush=True)
-    print("tail), crossing GD at some tau* - the phase boundary for 'when to use Muon'. Adam bad throughout.", flush=True)
+    print("Hypothesis: Muon is best at tau=0 and may degrade rapidly as the spectral tail grows,", flush=True)
+    print("with a crossover against GD at some tau*. Adam provides a coordinate-wise baseline.", flush=True)
     print("=" * 112, flush=True)
     print(f"{'tau':>5} |" + "".join(f"  {k:>7}_rec" for k in kinds) + " |" +
           "".join(f"  {k:>6}_er" for k in kinds) + " | muon-vs-gd", flush=True)

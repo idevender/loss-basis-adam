@@ -1,11 +1,15 @@
 """
-Hyperspectral completion data loader and CPU smoke test (Section 9).
+Legacy hyperspectral completion loader and exploratory CPU smoke test.
 
 Loads the Indian Pines hyperspectral cube (rows = pixels, columns = spectral bands), removes band
 means, masks entries, and runs dense low-rank-residual completion. Provides the load_matrix and
 make_split helpers reused by the matched-loss demos. Optimizer arms: Adam with optimizer weight
 decay, Adam with the same L2 in the loss, softened Adam (no flow), FlowAdam, and FlowAdam with the
 softened preconditioner.
+
+This script selects configurations by held-out RMSE and uses a short, density-0.50 protocol. It is
+retained as a loader/smoke test only and is not the source of the paper's real-data results. Use
+``hyperspectral_wilson_v3.py`` for the canonical CPU reproduction with train-only selection.
 """
 from __future__ import annotations
 
@@ -149,6 +153,8 @@ def best(x, method, cfgs):
 
 def main():
     t0 = time.time()
+    print("LEGACY EXPLORATORY SMOKE TEST: configuration selection below uses held-out RMSE; "
+          "do not use this script for paper numbers.", flush=True)
     x = load_matrix(SEEDS[0])
     zero = torch.sqrt((x * x).mean()).item()
     tails = ", ".join([f"r{r}:{v:.3f}" for r, v in spectral_tail(x)])

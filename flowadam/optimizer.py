@@ -8,8 +8,10 @@ second moment toward a shared gauge-invariant scalar, so the injected gradient-f
 survives subsequent Adam steps.
 """
 
-import torch
 import math
+import warnings
+
+import torch
 from torch.optim import Optimizer
 from torchdiffeq import odeint
 
@@ -31,7 +33,7 @@ class FlowAdam(Optimizer):
     loss-landscape regions (plateaus and stiff curvature).
 
     Args:
-        params: model parameters
+        params: model parameters in a single parameter group
         lr: learning rate (default: 1e-3)
         betas: Adam beta coefficients (default: (0.9, 0.999))
         eps: Adam epsilon (default: 1e-8)
@@ -109,7 +111,12 @@ class FlowAdam(Optimizer):
             raise ValueError("clip_mode must be 'percoord' or 'globalnorm'.")
         if precond_scalar not in ("geomean", "rms"):
             raise ValueError("precond_scalar must be 'geomean' or 'rms'.")
-        super(FlowAdam, self).__init__(params, defaults)
+        super().__init__(params, defaults)
+        if len(self.param_groups) != 1:
+            raise ValueError(
+                "FlowAdam currently supports exactly one parameter group. "
+                "Pass a single iterable of parameters rather than per-group options."
+            )
 
         self.state['global'] = {
             'avg_grad_norm': None,
@@ -298,12 +305,19 @@ class FlowAdam(Optimizer):
 
                     offset += numel
 
-            except Exception as e:
+            except (RuntimeError, FloatingPointError) as exc:
                 nfe_delta = stats['_current_ode_nfe']
                 if nfe_delta > 0:
                     stats['ode_nfe_per_trigger'].append(nfe_delta)
                     stats['ode_nfe_total'] += nfe_delta
 
+                warnings.warn(
+                    "FlowAdam ODE integration failed at optimizer step "
+                    f"{stats['step_count']} ({type(exc).__name__}: {exc}). "
+                    "Restoring the pre-ODE parameters and applying the Adam fallback for this step.",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
                 self._unflatten_and_update(y0, all_params)
                 self._adam_step(all_params, group)
         else:

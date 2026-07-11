@@ -1,10 +1,14 @@
 """
-Hyperspectral matched-train-loss protocol (Section 9).
+Legacy hyperspectral matched-train-loss protocol.
 
 Records the full (train, test, effective-rank) trajectory and compares methods at matched train-loss
 levels, so held-out differences reflect the interpolant chosen and not implicit early stopping. Also
 quantifies Muon's spectral-tail behaviour on real data (effective rank inflates while it recovers
 exactly on exact-low-rank synthetic targets), the regime-dependence formalized in Section 8.
+
+This fixed-learning-rate, two-seed version is retained for protocol comparison. Use
+``hyperspectral_wilson_v3.py`` for the canonical CPU reproduction with train-only learning-rate
+selection.
 """
 from __future__ import annotations
 import math, os, sys, time
@@ -99,6 +103,8 @@ def run_traj(kind, x, mask_tr, mask_te, seed, lr):
 
 def main():
     t0 = time.time()
+    print("LEGACY FIXED-LEARNING-RATE PROTOCOL: use hyperspectral_wilson_v3.py for paper reproduction.",
+          flush=True)
     x = load_matrix(seed=0)
     dof24 = 24 * (x.shape[0] + x.shape[1] - 24)
     print("=" * 118, flush=True)

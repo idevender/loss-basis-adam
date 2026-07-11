@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 import numpy as np
 
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figures")
+OUT = os.path.dirname(os.path.abspath(__file__))
 os.makedirs(OUT, exist_ok=True)
 
 C = dict(gd="#000000", adam="#D55E00", muon="#0072B2", shampoo="#009E73",
@@ -87,8 +87,8 @@ def fig_zoo():
     ax.grid(axis="y", visible=False)
     ax.tick_params(length=0, axis="y")
 
-    leg = [Patch(fc=EQ_FILL, ec="white", label="gauge-equivariant  (predicted: bias kept)"),
-           Patch(fc=CW_FILL, ec="white", label="coordinate-wise  (predicted: bias destroyed)")]
+    leg = [Patch(fc=EQ_FILL, ec="white", label="gauge-equivariant"),
+           Patch(fc=CW_FILL, ec="white", label="coordinate-wise")]
     ax.legend(handles=leg, loc="upper right", bbox_to_anchor=(1.0, 1.0), frameon=True,
               framealpha=0.96, edgecolor="#DDDDDD", fontsize=8.2, borderpad=0.6,
               handlelength=1.1)
@@ -101,17 +101,17 @@ def fig_attention():
     x = steps + 1
     curves = [
         ("Adam, gauge twin",          C["adam"],   "-",  "o",
-            [1.8e-7, 3.6e-3, 2.4e-2, 2.4e-1, 6.5e-1, 7.4e-1, 7.6e-1, 7.7e-1, 7.7e-1]),
+            [1.8e-7, 3.6e-3, 3.7e-2, 3.4e-1, 6.5e-1, 7.2e-1, 7.4e-1, 7.6e-1, 7.7e-1]),
         ("Adam, noise twin ($10^{-7}$)", C["adam"], ":",  "s",
-            [2.6e-7, 2.9e-7, 1.2e-6, 7.6e-6, 1.7e-5, 2.1e-5, 1.9e-5, 1.7e-5, 1.6e-5]),
+            [2.6e-7, 2.9e-7, 6.5e-7, 3.3e-6, 1.7e-5, 1.2e-5, 1.4e-5, 1.5e-5, 1.6e-5]),
         ("Muon, gauge twin",          C["muon"],   "-",  "o",
-            [1.8e-7, 2.2e-7, 1.1e-6, 2.7e-4, 2.3e-2, 3.4e-1, 6.6e-1, 8.1e-1, 8.5e-1]),
+            [1.8e-7, 2.2e-7, 4.9e-7, 3.9e-6, 2.3e-2, 3.2e-1, 5.8e-1, 7.5e-1, 8.5e-1]),
         ("Muon, noise twin ($10^{-7}$)", C["muon"], ":",  "s",
-            [2.6e-7, 2.9e-7, 1.6e-6, 4.9e-4, 4.0e-2, 3.9e-1, 7.0e-1, 8.3e-1, 8.7e-1]),
+            [2.6e-7, 2.9e-7, 7.0e-7, 8.8e-6, 4.0e-2, 3.4e-1, 5.9e-1, 7.4e-1, 8.7e-1]),
         ("SGD, gauge twin",           C["sgd"],    "-",  "^",
-            [1.8e-7, 2.9e-7, 1.6e-6, 1.4e-5, 3.7e-5, 5.0e-5, 3.9e-5, 2.6e-5, 2.0e-5]),
+            [1.8e-7, 2.9e-7, 3.3e-7, 1.3e-5, 3.7e-5, 2.4e-5, 2.1e-5, 2.1e-5, 2.0e-5]),
         ("scalar-Adam, gauge twin",   C["scalar"], "-",  "D",
-            [1.8e-7, 1.6e-7, 4.2e-7, 1.9e-6, 4.1e-6, 5.4e-6, 5.0e-6, 4.6e-6, 4.3e-6]),
+            [1.8e-7, 1.6e-7, 3.1e-7, 5.8e-6, 4.1e-6, 3.8e-6, 4.0e-6, 4.1e-6, 4.3e-6]),
     ]
     fig, ax = plt.subplots(figsize=(6.6, 3.6))
     for lab, col, ls, mk, ys in curves:
@@ -124,7 +124,7 @@ def fig_attention():
                 arrowprops=dict(arrowstyle="->", color=C["adam"], lw=1.0,
                                 connectionstyle="arc3,rad=0.25"))
     ax.annotate("chaos: Muon's gauge and\nnoise twins trace one curve",
-                xy=(101, 3.1e-2), xytext=(200, 2.4e-3), fontsize=8.2, color=C["muon"],
+                xy=(101, 2.3e-2), xytext=(200, 2.4e-3), fontsize=8.2, color=C["muon"],
                 ha="left", va="center",
                 arrowprops=dict(arrowstyle="->", color=C["muon"], lw=1.0,
                                 connectionstyle="arc3,rad=0.3"))
@@ -171,7 +171,7 @@ def fig_phase():
                 fontsize=8.2, color=C["muon"], ha="center",
                 arrowprops=dict(arrowstyle="->", color=C["muon"], lw=1.0,
                                 connectionstyle="arc3,rad=-0.25"))
-    ax.annotate("basis-breaking tax:\nAdam worst at every $\\tau$",
+    ax.annotate("coordinate-wise baseline:\nAdam highest at every $\\tau$",
                 xy=(0.24, 0.61), xytext=(0.145, 0.86), fontsize=8.2, color=C["adam"],
                 ha="left", va="center",
                 arrowprops=dict(arrowstyle="->", color=C["adam"], lw=1.0,

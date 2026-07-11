@@ -84,7 +84,7 @@ def split_score(results, mode, rule):
         got = 'preserve' if v['rec'] < mid else 'destroy'
         hits += got == want
     print(f"    [{mode} / {rule}-sel] split at rec {mid:.3f}: {hits}/{len(sel)} "
-          f"{'- equivariance classifies' if hits == len(sel) else '- MISSES, inspect'}", flush=True)
+          f"{'- class-consistent' if hits == len(sel) else '- inspect mismatches'}", flush=True)
 
 
 def main():

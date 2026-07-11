@@ -119,7 +119,7 @@ def main():
     print("=" * 100, flush=True)
     print(f"RESTORATION PROBE | matrix sensing {N}x{N} r*{R_STAR} k{K} | dof~{DOF} m={M} ({M/DOF:.1f}x dof) | "
           f"init{INIT} | {len(SEEDS)} seeds | wd=0 unless noted", flush=True)
-    print("Thesis: GD recovers, Adam(wd0) fails, FlowAdam restores. Train must interpolate (else under-training).", flush=True)
+    print("Protocol: compare GD, Adam(wd0), and FlowAdam only after interpolation.", flush=True)
     print("=" * 100, flush=True)
     print(f"{'method':>14} | {'recovery_err':>12} | {'train_loss':>11} | {'nuc_norm':>9} | {'eff_rank':>8} | cfg", flush=True)
     print("-" * 100, flush=True)
@@ -144,8 +144,8 @@ def main():
     print(f"\nREAD:", flush=True)
     print(f"  Adam(wd0) damages bias?   recovery {a0:.4f} vs GD {gd:.4f}   ->  {'YES Adam worse' if a0 > 1.5*gd else 'no clear damage'}", flush=True)
     print(f"  FlowAdam restores?        recovery {fl:.4f} vs GD {gd:.4f}   ->  {'YES flow ~ GD' if fl < 1.5*gd else 'NO flow != GD'}", flush=True)
-    print(f"  FlowAdam vs Adam(wd0):    {(a0-fl)/a0*100:+.1f}%   (the mechanism win)", flush=True)
-    print(f"  FlowAdam vs Adam(TUNED-wd): {(aw-fl)/aw*100:+.1f}%   (the practical bar - must beat tuned wd, not just wd0)", flush=True)
+    print(f"  FlowAdam vs Adam(wd0):    {(a0-fl)/a0*100:+.1f}%", flush=True)
+    print(f"  FlowAdam vs Adam(TUNED-wd): {(aw-fl)/aw*100:+.1f}%", flush=True)
     print(f"\n[done in {(time.time()-t0)/60:.1f} min]", flush=True)
 
 

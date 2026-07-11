@@ -174,8 +174,8 @@ def main():
         ('adam',       'no',   [1e-3, 1e-2, 3e-2],               'destroy (anchor)'),
         ('adam_p0rms', 'YES',  [1e-3, 3e-3, 1e-2, 3e-2],         'preserve (scalar = time-rescaled flow)'),
         ('rmsprop',    'no',   [1e-4, 3e-4, 1e-3, 3e-3, 1e-2],   'destroy (per-coord)'),
-        ('signum',     'no',   [1e-4, 3e-4, 1e-3, 3e-3],         'destroy HARD (l_inf extreme)'),
-        ('lion',       'no',   [1e-4, 3e-4, 1e-3, 3e-3],         'destroy HARD (l_inf extreme)'),
+        ('signum',     'no',   [1e-4, 3e-4, 1e-3, 3e-3],         'coordinate-wise ($\\ell_\\infty$-like)'),
+        ('lion',       'no',   [1e-4, 3e-4, 1e-3, 3e-3],         'coordinate-wise ($\\ell_\\infty$-like)'),
         ('adafactor',  'no',   [3e-4, 1e-3, 3e-3, 1e-2],         'destroy (factored diagonal)'),
         ('muon',       'YES',  [3e-3, 1e-2, 3e-2, 0.1],          'preserve (msign equivariant) + NOW interpolates'),
         ('shampoo',    'YES',  [3e-2, 0.1, 0.3, 1.0],            'preserve (L,R transform covariantly)'),
@@ -198,11 +198,11 @@ def main():
             continue
         got = 'preserve' if e < mid else 'destroy'
         want = 'preserve' if eq == 'YES' else 'destroy'
-        ok = 'HIT ' if got == want else 'MISS'
+        ok = 'match' if got == want else 'mismatch'
         hits += got == want; total += 1
         print(f"  {kind:>12}: er={e:5.2f} bal={res[kind]['bal']:.2e} -> {got:8s} [{ok}]", flush=True)
-    print(f"\nPREDICTION SCORE: {hits}/{total} - equivariance classifies the zoo" if hits == total
-          else f"\nPREDICTION SCORE: {hits}/{total} - examine the misses", flush=True)
+    print(f"\nClass-consistency count: {hits}/{total}" if hits == total
+          else f"\nClass-consistency count: {hits}/{total}; inspect mismatches", flush=True)
     print(f"[done in {(time.time()-t0)/60:.1f} min]", flush=True)
 
 

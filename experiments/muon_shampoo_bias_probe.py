@@ -119,15 +119,15 @@ def main():
     print("=" * 92, flush=True)
     print(f"MUON/SHAMPOO BIAS PROBE | sensing {N}x{N} r*{R_STAR} k{K} m={M} ({M/DOF:.1f}x dof) init={INIT} "
           f"wd=0 | {len(seeds)} seeds", flush=True)
-    print("Do hot structured optimizers preserve GD's low-rank bias (~4) or destroy it like Adam (~14)?", flush=True)
+    print("Do structured optimizers preserve GD-like low effective rank (~4) or resemble Adam (~14)?", flush=True)
     print("=" * 92, flush=True)
     print(f"{'method':>10} | {'recovery':>9} | {'train':>9} | {'nuc':>7} | {'eff_rank':>8} | {'lr':>6} | read", flush=True)
     print("-" * 92, flush=True)
     configs = [
-        ('gd',      [0.01, 0.03, 0.1, 0.3],     'GD/flow ref - bias INTACT'),
-        ('adam',    [1e-3, 1e-2, 3e-2],         'the destroyer'),
-        ('muon',    [1e-3, 3e-3, 1e-2, 3e-2],   '??? orthogonalized matrix update'),
-        ('shampoo', [3e-2, 0.1, 0.3, 1.0],      '??? full-matrix preconditioner'),
+        ('gd',      [0.01, 0.03, 0.1, 0.3],     'GD/flow reference'),
+        ('adam',    [1e-3, 1e-2, 3e-2],         'coordinate-wise baseline'),
+        ('muon',    [1e-3, 3e-3, 1e-2, 3e-2],   'orthogonalized matrix update'),
+        ('shampoo', [3e-2, 0.1, 0.3, 1.0],      'full-matrix preconditioner'),
     ]
     res = {}
     for kind, lrs, note in configs:
@@ -140,12 +140,11 @@ def main():
     mid = 9.0 if not (np.isfinite(gd) and np.isfinite(ad)) else (gd + ad) / 2
     def verdict(name):
         e = res[name]['er']
-        return f"{name}: er={e:.2f} -> {'PRESERVES (≈GD)' if e < mid else 'DESTROYS (≈Adam)'}"
-    print(f"\nGD eff_rank={gd:.2f} (intact)   Adam eff_rank={ad:.2f} (destroyed)   preserve/destroy split={mid:.2f}", flush=True)
+        return f"{name}: er={e:.2f} -> {'closer to GD' if e < mid else 'closer to Adam'}"
+    print(f"\nGD eff_rank={gd:.2f}   Adam eff_rank={ad:.2f}   midpoint={mid:.2f}", flush=True)
     print("  " + verdict('muon'), flush=True)
     print("  " + verdict('shampoo'), flush=True)
-    print("\nIf Muon/Shampoo PRESERVE -> 'structure-aware optimizers keep the bias; Adam's anisotropy is the", flush=True)
-    print("  outlier' = the anisotropy mechanism explains the implicit bias of the optimizers people USE.", flush=True)
+    print("\nThis probe compares effective-rank outcomes under the shared experimental protocol.", flush=True)
     print(f"\n[done in {(time.time()-t0)/60:.1f} min]", flush=True)
 
 

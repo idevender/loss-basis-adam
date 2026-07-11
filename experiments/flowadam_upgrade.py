@@ -3,7 +3,7 @@ FlowAdam-p: softening the preconditioner while keeping the flow (Section 10).
 
 Softening Adam's per-coordinate denominator (precond_power p: 1 -> 0) recovers the low-rank bias but
 costs several times the steps. The flow injects the un-preconditioned GD direction occasionally, but
-stock FlowAdam leaks because the same sqrt(v) re-mangles the injected direction on the next step.
+stock FlowAdam weakens the injected direction because the same sqrt(v) rescales it on the next step.
 FlowAdam-p combines the flow with the softened preconditioner so the injected direction survives,
 aiming to reach GD's recovery in fewer steps than softened-Adam alone.
 
