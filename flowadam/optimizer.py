@@ -37,6 +37,8 @@ class FlowAdam(Optimizer):
         lr: learning rate (default: 1e-3)
         betas: Adam beta coefficients (default: (0.9, 0.999))
         eps: Adam epsilon (default: 1e-8)
+        mode: preset 'A' or 'B' (default: 'B') for switch_sensitivity,
+            curvature_sensitivity, and ode_t_scale; explicit values override the preset.
         ode_t_scale: ODE integration time scale (default: 1.0)
         ode_method: ODE solver method (default: 'dopri5')
         ode_tol: ODE solver tolerance (default: 1e-4)
@@ -319,6 +321,12 @@ class FlowAdam(Optimizer):
                     stacklevel=2,
                 )
                 self._unflatten_and_update(y0, all_params)
+                # The last ODE evaluation left gradients from a trial state; recompute
+                # them at the restored parameters before the fallback Adam step.
+                with torch.enable_grad():
+                    self.zero_grad()
+                    closure()
+                stats['grad_evals_total'] += 1
                 self._adam_step(all_params, group)
         else:
             self._adam_step(all_params, group)
@@ -336,6 +344,11 @@ class FlowAdam(Optimizer):
         p=1 is standard per-coordinate Adam; p=0 uses a shared scalar denominator, which
         preserves the injected gradient-flow direction so the low-rank bias survives.
         sbar follows precond_scalar ('geomean' or 'rms'; 'rms' is gauge-invariant).
+
+        Epsilon convention: the p=1 branch folds bias correction into the step size and
+        adds eps to sqrt(v) before that factor (TensorFlow-style Adam); it differs from
+        torch.optim.Adam only through an effective epsilon of eps/sqrt(bias_corr2) when
+        gradient variance is near zero.
         """
         beta1, beta2 = group['betas']
         p_pow = group['precond_power']

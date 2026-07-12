@@ -1,0 +1,28 @@
+================================================================================================================
+ATTENTION GAUGE v2 - NOISE-TWIN CONTROL | same basis, copy2 q/k weights + 1e-7 gaussian
+Discriminates STRUCTURAL basis-dependence (gauge-twin >> noise-twin at step 1: Adam) from
+CHAOTIC float amplification (gauge-twin ~ noise-twin curves: suspected for Muon).
+================================================================================================================
+
+        adam lr=0.001  [noise-twin]
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 2.6e-07  2.9e-07  6.5e-07  3.3e-06  1.7e-05  1.2e-05  1.4e-05  1.5e-05  1.6e-05
+        final: acc1=0.4020 acc2=0.4020 |Δacc|=0.0000
+
+        muon lr=0.02  [noise-twin]
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 2.6e-07  2.9e-07  7.0e-07  8.8e-06  4.0e-02  3.4e-01  5.9e-01  7.4e-01  8.7e-01
+        final: acc1=0.4035 acc2=0.4027 |Δacc|=0.0008
+
+         sgd lr=0.5  [noise-twin]
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 2.6e-07  3.9e-07  4.8e-07  4.9e-05  6.7e-05  5.7e-05  5.5e-05  5.4e-05  5.4e-05
+        final: acc1=0.4035 acc2=0.4035 |Δacc|=0.0000
+
+  adam_p0rms lr=0.003  [noise-twin]
+        step:        0        1       10       50      100      300      600     1000     1500
+        logit: 2.6e-07  2.3e-07  4.2e-07  9.2e-06  8.7e-06  8.3e-06  8.5e-06  8.8e-06  9.0e-06
+        final: acc1=0.4035 acc2=0.4035 |Δacc|=0.0000
+
+[done in 3.5 min]
+

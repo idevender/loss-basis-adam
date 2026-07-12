@@ -53,9 +53,11 @@ def closure():
 opt.step(closure)   # FlowAdam requires a closure
 ```
 
-For an exactly gauge-invariant `p=0` run, pass `precond_scalar='rms'` explicitly. The package
-default remains `'geomean'` for backwards compatibility; it should not be used for an exact
-finite-step equivariance claim. FlowAdam currently accepts one parameter group.
+For an exactly gauge-invariant `p=0` run, pass both `precond_scalar='rms'` and
+`clip_mode='globalnorm'`: the default per-coordinate clip is itself a gauge-breaking map on any
+step where the ODE path triggers. The package default scalar remains `'geomean'` for backwards
+compatibility; it should not be used for an exact finite-step equivariance claim. FlowAdam
+currently accepts one parameter group.
 
 ## Repository layout
 
@@ -94,8 +96,8 @@ python optimizer_zoo_bias.py
 | `hyperspectral_completion.py` | Legacy smoke test | Indian Pines loader and exploratory CPU smoke test; configuration selection is test-informed and it is not a paper result |
 | `hyperspectral_wilson_v2.py` | Legacy protocol | Earlier fixed-learning-rate matched-loss protocol, retained for comparison |
 | `hyperspectral_wilson_v3.py` | Section 9, App C5 | Canonical CPU Indian Pines reproduction: matched loss with train-only learning-rate selection |
-| `flowadam_upgrade.py` | Section 10 | FlowAdam-p: the flow plus the softened preconditioner |
-| `flowadam_upgrade_rms.py` | Section 10 | FlowAdam-p numbers under the RMS scalar |
+| `flowadam_upgrade.py` | Section 10 (legacy scalar) | FlowAdam-p under the legacy geometric-mean scalar; robustness comparison, not the reported numbers |
+| `flowadam_upgrade_rms.py` | Section 10 (canonical) | FlowAdam-p under the paper's RMS scalar; the source of the reported Section 10 numbers |
 | `flowadam_p_interp_control.py` | App C7 | Interpolation control (not an early-stopping artifact) |
 
 For the paper's CPU real-data protocol, use `hyperspectral_wilson_v3.py`. The two legacy scripts
@@ -114,6 +116,8 @@ python zoo_ladder.py --n 40 --out ../nibi_results/zoo_n40.jsonl
 python phase_fine.py --out ../nibi_results/phase_n40.jsonl
 python dial_scale.py --out ../nibi_results/dial_n40.jsonl --flowadam
 python attention_suite.py --task mod --out ../nibi_results/attn_mod.jsonl
+python attention_suite.py --task text --depth 6 --dmodel 256 \
+  --data ../../data/text/input.txt --out ../nibi_results/attn_text.jsonl
 python pavia.py --dataset paviau --mat /path/to/PaviaU.mat \
   --densities 0.28,0.46 --out ../nibi_results/pavia_paviau.jsonl
 python collect.py --dir ../nibi_results --md ../nibi_results/SUMMARY.md
@@ -147,8 +151,10 @@ hyperspectral scenes and a character-level text corpus, none of which are shippe
   University of the Basque Country (ehu.eus). Place `Indian_pines_corrected.mat` under
   `data/hyperspectral/` for the CPU scripts, or pass `--mat` to `experiments/nibi/pavia.py`.
 
-- A plain-text corpus (e.g. tiny-shakespeare) for the character-LM attention twins in
-  `experiments/nibi/attention_suite.py --task text`.
+- The tiny-Shakespeare corpus for the character-LM attention twins (`input.txt`, ~1.1 MB, from
+  `data/tinyshakespeare/input.txt` in github.com/karpathy/char-rnn). Place it at
+  `data/text/input.txt` or pass `--data`. The paper's char-LM row uses
+  `--task text --depth 6 --dmodel 256` with the remaining flags at their defaults.
 
 ## Citation
 

@@ -32,7 +32,11 @@ results/
 runs/
 logs/*
 !logs/attention_gauge_cpu.txt
+!logs/attention_gauge_noise_cpu.txt
 wandb/
+
+# Tooling caches
+.pytest_cache/
 
 # Figure outputs (regenerate with figures/make_figures.py)
 figures/*.pdf
