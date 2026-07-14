@@ -1,7 +1,6 @@
 # The Loss Does Not See the Basis, but Adam Does
 
-Code for the paper **"The Loss Does Not See the Basis, but Adam Does: Orthogonal Gauge
-Equivariance Predicts Implicit Bias in Factored Models"** (Devender Singh).
+Code for the paper **"The Loss Does Not See the Basis, but Adam Does"** (Devender Singh).
 
 A factored loss `L(UV^T)` is invariant under the gauge action `(U, V) -> (UQ, VQ)` for
 orthogonal `Q`. This repository contains experiments assessing whether an optimizer's implicit
