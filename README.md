@@ -133,7 +133,8 @@ cd figures
 python make_figures.py
 ```
 
-The script writes vector PDFs directly to `figures/`. Its attention-gauge curves are a checked
+The script writes vector PDFs directly to `figures/`. These are the exact figures the manuscript
+includes. Its attention-gauge curves are a checked
 snapshot of the current CPU runs recorded in `logs/attention_gauge_cpu.txt` and
 `logs/attention_gauge_noise_cpu.txt`; regenerate the logs and figure together whenever the attention
 implementation changes.

@@ -1,10 +1,12 @@
-"""
-Generate the paper figures.
+"""Generate the paper figures.
 
 Renders the attention-gauge, dial, phase-diagram, and zoo-map figures as vector PDFs, using a
 colorblind-safe palette with one fixed hue per entity and serif typography matched to the paper body.
 The plotted numbers are the final experiment outputs; the dial uses the RMS
 (exactly-equivariant-at-p=0) convention.
+
+Writes vector PDFs into this directory. These are the exact figures the manuscript includes; copy
+them into the paper tree when they change.
 
 Run: python make_figures.py
 """
@@ -18,10 +20,11 @@ import numpy as np
 OUT = os.path.dirname(os.path.abspath(__file__))
 os.makedirs(OUT, exist_ok=True)
 
+# fixed method colors (Okabe-Ito): identity follows the entity everywhere
 C = dict(gd="#000000", adam="#D55E00", muon="#0072B2", shampoo="#009E73",
          scalar="#56B4E9", sgd="#8C8C8C", rmsprop="#E69F00", adafactor="#CC79A7",
          lion="#C7A100", signum="#7A5C00")
-EQ_FILL, CW_FILL = "#0072B2", "#D55E00"
+EQ_FILL, CW_FILL = "#0072B2", "#D55E00"        # cluster identities
 INK, MUTE, FAINT = "#1A1A1A", "#5A5A5A", "#9A9A9A"
 
 plt.rcParams.update({
@@ -42,20 +45,21 @@ plt.rcParams.update({
 
 def _save(fig, name):
     fig.savefig(os.path.join(OUT, name + ".pdf"))
-    if os.environ.get("FIG_PNG"):
+    if os.environ.get("FIG_PNG"):                 # opt-in raster copies for visual QA
         fig.savefig(os.path.join(OUT, name + ".png"), dpi=200)
     plt.close(fig)
 
 
+# ---------------------------------------------------------------- fig 1: zoo map
 def fig_zoo():
-    rows = [
+    rows = [  # (label, recovery, equivariant?)
         ("Muon",              0.0000, True),
         ("GD",                0.1312, True),
         ("scalar-Adam ($p{=}0$)", 0.2010, True),
         ("Shampoo",           0.2856, True),
         ("Lion",              0.4248, False),
-        ("signSGD-m",         0.4454, False),
-        ("RMSProp",           0.5270, False),
+        ("signum",            0.4454, False),
+        ("RMSProp",           0.5266, False),
         ("Adafactor",         0.5430, False),
         ("Adam",              0.5734, False),
     ]
@@ -68,15 +72,18 @@ def fig_zoo():
         ax.text(rec + 0.010, yi, "0.00005" if rec == 0 else f"{rec:.3f}",
                 va="center", ha="left", fontsize=8.6, color=MUTE, zorder=4)
 
+    # empty gap between the two clusters
     ax.axvspan(0.286, 0.425, color="#F1F1F1", zorder=0)
     ax.plot([0.3555, 0.3555], [-0.6, 8.6], color=FAINT, lw=0.8, ls=(0, (2, 2)), zorder=1)
-    ax.text(0.3555, 4.5, "empty gap", ha="center", va="center", fontsize=8.4,
-            color=MUTE, style="italic",
+    # Placed high in the band: the only bar-value label that falls inside the gap is Shampoo's
+    # (0.286, at y=5), so anchor clear of it rather than at the band's vertical midpoint.
+    ax.text(0.3555, 6.5, "empty gap\n(this budget)", ha="center", va="center", fontsize=8.4,
+            color=MUTE, style="italic", linespacing=1.25,
             bbox=dict(boxstyle="round,pad=0.18", fc="white", ec="none", alpha=0.9))
 
     ax.set_yticks(y)
     ax.set_yticklabels([r[0] for r in rows])
-    pos_eq = {int(yi): eq for yi, (_, _, eq) in zip(y, rows)}
+    pos_eq = {int(yi): eq for yi, (_, _, eq) in zip(y, rows)}   # robust to tick ordering
     for tl in ax.get_yticklabels():
         tl.set_color(EQ_FILL if pos_eq[int(round(tl.get_position()[1]))] else CW_FILL)
         tl.set_fontsize(9.5)
@@ -96,10 +103,11 @@ def fig_zoo():
     _save(fig, "zoo_map")
 
 
+# --------------------------------------------------- fig 2: attention gauge drift
 def fig_attention():
     steps = np.array([0, 1, 10, 50, 100, 300, 600, 1000, 1500])
-    x = steps + 1
-    curves = [
+    x = steps + 1  # log axis includes step 0
+    curves = [  # (label, color, linestyle, marker, y)
         ("Adam, gauge twin",          C["adam"],   "-",  "o",
             [1.8e-7, 3.6e-3, 3.7e-2, 3.4e-1, 6.5e-1, 7.2e-1, 7.4e-1, 7.6e-1, 7.7e-1]),
         ("Adam, noise twin ($10^{-7}$)", C["adam"], ":",  "s",
@@ -142,8 +150,10 @@ def fig_attention():
     _save(fig, "attention_gauge")
 
 
+# ------------------------------------------------------- fig 3: tail phase diagram
 def fig_phase():
     taus = np.array([0.0, 0.05, 0.1, 0.2, 0.35, 0.5])
+    # 10-seed re-run (Nibi H100 phase_n40.jsonl, train-only lr selection; see SUMMARY.md)
     rec = dict(
         gd=[0.1125, 0.1503, 0.2144, 0.3512, 0.5488, 0.7274],
         adam=[0.5419, 0.5427, 0.5552, 0.5968, 0.6849, 0.7758],
@@ -187,10 +197,11 @@ def fig_phase():
     _save(fig, "phase_diagram")
 
 
+# ---------------------------------------------- fig 4: dial (anisotropy restoration)
 def fig_dial():
     p = np.array([1.0, 0.75, 0.5, 0.25, 0.0])
-    er = np.array([14.5, 11.1, 8.2, 6.4, 5.4])
-    rc = [0.570, 0.459, 0.348, 0.260, 0.201]
+    er = np.array([14.5, 11.1, 8.2, 6.4, 5.4])     # RMS convention
+    rc = [0.570, 0.459, 0.348, 0.260, 0.201]        # recovery (annotated at ends)
     fig, ax = plt.subplots(figsize=(4.6, 3.5))
 
     _wbox = dict(boxstyle="round,pad=0.12", fc="white", ec="none", alpha=0.9)
@@ -215,7 +226,7 @@ def fig_dial():
     ax.set_ylabel("effective rank of solution")
     ax.set_xticks([1.0, 0.75, 0.5, 0.25, 0.0])
     ax.set_xticklabels(["1\n(Adam)", "0.75", "0.5", "0.25", "0\n(scalar)"])
-    ax.set_xlim(1.08, -0.12)
+    ax.set_xlim(1.08, -0.12)   # inverted: Adam (per-coord) left -> scalar right
     ax.set_ylim(2.2, 15.6)
     fig.tight_layout()
     _save(fig, "dial")
