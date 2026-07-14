@@ -139,6 +139,19 @@ snapshot of the current CPU runs recorded in `logs/attention_gauge_cpu.txt` and
 `logs/attention_gauge_noise_cpu.txt`; regenerate the logs and figure together whenever the attention
 implementation changes.
 
+## Raw cluster records
+
+`experiments/nibi_results/` holds the raw JSONL records from the H100 runs behind Table 5
+(hyperspectral GPU replication and Pavia), Table 9 (twin drift at scale) and Table 11 (the
+problem-size ladder). They are committed because those runs need a GPU allocation to reproduce, so
+the records let you check the tables directly. This is the same directory the ladder writes to above,
+so `python collect.py --dir ../nibi_results` regenerates `SUMMARY.md` from them without a GPU.
+
+Each `zoo_n*.jsonl` carries one `select` record naming the learning rate chosen for each method, plus
+one record per (method, lr, seed). Table 11's cells are the mean `rec` over the seeds at each method's
+selected rate.
+
+
 ## Data
 
 The synthetic sensing tasks are generated in code. The real-data experiments use two public

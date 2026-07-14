@@ -41,3 +41,9 @@ wandb/
 # Figure outputs (regenerate with figures/make_figures.py)
 figures/*.pdf
 figures/*.png
+
+# Raw H100/Nibi cluster records behind Tables 5, 9 and 11. Committed on purpose:
+# they are the only copy of those runs, and they let a reader check those tables
+# without a GPU allocation. (Overrides the *.jsonl rule above.)
+!experiments/nibi_results/*.jsonl
+!experiments/nibi_results/*.md
