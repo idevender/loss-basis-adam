@@ -40,6 +40,7 @@ plt.rcParams.update({
     "xtick.labelsize": 9.5, "ytick.labelsize": 9.5,
     "figure.dpi": 150, "savefig.dpi": 300, "savefig.bbox": "tight",
     "savefig.pad_inches": 0.03,
+    "pdf.fonttype": 42,   # TrueType, not the Type 3 default: keeps figure text selectable
 })
 
 
@@ -181,9 +182,12 @@ def fig_phase():
                 fontsize=8.2, color=C["muon"], ha="center",
                 arrowprops=dict(arrowstyle="->", color=C["muon"], lw=1.0,
                                 connectionstyle="arc3,rad=-0.25"))
+    # The label spans the tau*=0.2 rule, so it carries a white bbox: without it the dashed
+    # line strikes through the lettering.
     ax.annotate("coordinate-wise baseline:\nAdam highest at every $\\tau$",
                 xy=(0.24, 0.61), xytext=(0.145, 0.86), fontsize=8.2, color=C["adam"],
-                ha="left", va="center",
+                ha="left", va="center", zorder=5,
+                bbox=dict(boxstyle="round,pad=0.18", fc="white", ec="none", alpha=0.9),
                 arrowprops=dict(arrowstyle="->", color=C["adam"], lw=1.0,
                                 connectionstyle="arc3,rad=-0.2"))
 
