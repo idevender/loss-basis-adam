@@ -160,8 +160,7 @@ hyperspectral scenes and a character-level text corpus, none of which are shippe
 
 ```bibtex
 @article{singh2026gauge,
-  title  = {The Loss Does Not See the Basis, but Adam Does: Orthogonal Gauge
-            Equivariance Predicts Implicit Bias in Factored Models},
+  title  = {The Loss Does Not See the Basis, but Adam Does},
   author = {Singh, Devender},
   year   = {2026},
   note   = {Preprint}
