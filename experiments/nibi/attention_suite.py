@@ -303,7 +303,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--task', choices=['mod', 'text'], required=True)
     ap.add_argument('--p', type=int, default=97)
-    ap.add_argument('--data', default='../data/text/input.txt')
+    ap.add_argument('--data', default=os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'text', 'input.txt'))
     ap.add_argument('--ctx', type=int, default=128)
     ap.add_argument('--batch', type=int, default=32)
     ap.add_argument('--depth', type=int, default=4)

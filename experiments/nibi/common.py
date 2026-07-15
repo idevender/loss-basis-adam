@@ -275,8 +275,10 @@ class Sink:
         self._write(dict(key=f'__meta__{time.time()}', kind='meta', **meta))
 
     def _write(self, rec):
+        rec = {k: (None if isinstance(v, float) and not math.isfinite(v) else v)
+               for k, v in rec.items()}
         with open(self.path, 'a') as f:
-            f.write(json.dumps(rec) + '\n')
+            f.write(json.dumps(rec, allow_nan=False) + '\n')
             f.flush()
             os.fsync(f.fileno())
 
@@ -294,6 +296,7 @@ def load_cells(path):
         for line in f:
             try:
                 rec = json.loads(line)
+                rec = {k: (float('nan') if v is None else v) for k, v in rec.items()}
             except json.JSONDecodeError:
                 continue
             if rec.get('kind') != 'meta' and not str(rec.get('key', '')).startswith('__meta__'):

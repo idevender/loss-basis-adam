@@ -33,6 +33,7 @@ def rows_of(path):
     for line in open(path):
         try:
             r = json.loads(line)
+            r = {k: (float('nan') if v is None else v) for k, v in r.items()}
         except json.JSONDecodeError:
             continue
         if r.get('kind') != 'meta' and not str(r.get('key', '')).startswith('__meta__'):
@@ -236,7 +237,7 @@ def pavia_tables(files, md):
                             wins = sum(h1['hits'][lv][0] < h2['hits'][lv][0]
                                        for h1, h2 in zip(sorted(g, key=lambda r: r['seed']),
                                                          sorted(a, key=lambda r: r['seed'])))
-                            md.append(f'\n**SUMMARY {ds} d={dens:g} @train<={lv}: GD {gm:.5f} vs '
+                            md.append(f'\n**HEADLINE {ds} d={dens:g} @train<={lv}: GD {gm:.5f} vs '
                                       f'Adam {am:.5f} -> +{(am - gm) / am * 100:.1f}% '
                                       f'({wins}/{len(g)} seeds)**\n')
                             break
@@ -248,7 +249,7 @@ def main():
     ap.add_argument('--md', required=True)
     a = ap.parse_args()
     g = lambda pat: glob.glob(os.path.join(a.dir, pat))
-    md = ['# Nibi H100 ladder - collected results\n']
+    md = ['# Nibi H100 ladder — collected results\n']
     zoo_tables(g('zoo_*.jsonl'), md)
     phase_tables(g('phase_*.jsonl'), md)
     dial_tables(g('dial_*.jsonl'), md)
