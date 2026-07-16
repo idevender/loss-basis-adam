@@ -89,7 +89,7 @@ def fig_zoo():
         tl.set_color(EQ_FILL if pos_eq[int(round(tl.get_position()[1]))] else CW_FILL)
         tl.set_fontsize(9.5)
     ax.set_xlabel(r"ground-truth recovery error $\|W-X^\ast\|_F/\|X^\ast\|_F$"
-                  "\n(lower = low-rank bias preserved)")
+                  "\n(lower = better recovery of the planted matrix)")
     ax.set_xlim(0, 0.72)
     ax.set_ylim(-0.7, 8.9)
     ax.grid(axis="y", visible=False)

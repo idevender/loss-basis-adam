@@ -58,7 +58,10 @@ def balancedness(U, V):
         return (U.T @ U - V.T @ V).norm().item()
 
 
-DECAYED = {'muon', 'signum', 'lion'}
+# Decay is given by criterion, not by class: methods with a constant update norm (muon, signum,
+# lion) and rmsprop, whose eps-bounded denominator floors at ~3e-4 at any budget, cannot reach the
+# 1e-7 interpolation bar at a constant step. zoo_decay_control.py overrides this set per run.
+DECAYED = {'muon', 'signum', 'lion', 'rmsprop'}
 
 
 def run(kind, seed, lr):

@@ -1,0 +1,46 @@
+================================================================================================================
+PRECOND DIAL, FIXED-LR ARM (no per-p selection) | sensing 40x40 r*3 k40 m=462 (2.0x dof) init0.001 | 3 seeds | wd=0 | rms scalar | bar 1e-07
+================================================================================================================
+lr=0.001   p=1     | rec  0.5764 sd 0.0451 | erank  14.38 | train  4.88e-09 | steps   1200 | 
+lr=0.001   p=0.75  | rec  0.4588 sd 0.0468 | erank  11.07 | train  6.51e-09 | steps   1600 | 
+lr=0.001   p=0.5   | rec  0.3481 sd 0.0487 | erank   8.21 | train  5.91e-08 | steps   2000 | 
+lr=0.001   p=0.25  | rec  0.2595 sd 0.0417 | erank   6.37 | train  3.23e-08 | steps   2666 | 
+lr=0.001   p=0     | rec  0.2010 sd 0.0311 | erank   5.43 | train  3.51e-08 | steps   3200 | 
+lr=0.003   p=1     | rec  0.5704 sd 0.0412 | erank  14.49 | train  2.55e-08 | steps    400 | 
+lr=0.003   p=0.75  | rec  0.4730 sd 0.0420 | erank  11.49 | train  2.03e-09 | steps    600 | 
+lr=0.003   p=0.5   | rec  0.3824 sd 0.0421 | erank   8.86 | train  4.62e-09 | steps    800 | 
+lr=0.003   p=0.25  | rec  0.3083 sd 0.0368 | erank   7.15 | train  2.42e-08 | steps   1000 | 
+lr=0.003   p=0     | rec  0.2559 sd 0.0298 | erank   6.23 | train  1.73e-08 | steps   1266 | 
+lr=0.01    p=1     | rec  0.5734 sd 0.0452 | erank  14.37 | train  1.21e-11 | steps    400 | 
+lr=0.01    p=0.75  | rec  0.5000 sd 0.0383 | erank  12.01 | train  1.08e-11 | steps    400 | 
+lr=0.01    p=0.5   | rec  0.4405 sd 0.0328 | erank  10.05 | train  1.15e-11 | steps    400 | 
+lr=0.01    p=0.25  | rec  0.3922 sd 0.0272 | erank   8.70 | train  9.80e-12 | steps    400 | 
+lr=0.01    p=0     | rec  0.3566 sd 0.0235 | erank   7.96 | train  2.24e-09 | steps    400 | 
+lr=0.03    p=1     | rec  0.5809 sd 0.0406 | erank  14.52 | train  2.95e-11 | steps    400 | 
+lr=0.03    p=0.75  | rec  0.5359 sd 0.0378 | erank  12.87 | train  2.37e-11 | steps    400 | 
+lr=0.03    p=0.5   | rec  0.5135 sd 0.0316 | erank  11.81 | train  2.26e-11 | steps    400 | 
+lr=0.03    p=0.25  | rec  0.4996 sd 0.0247 | erank  11.16 | train  2.09e-11 | steps    400 | 
+lr=0.03    p=0     | rec  0.4929 sd 0.0195 | erank  10.90 | train  3.22e-08 | steps    333 | 
+lr=0.1     p=1     | rec  0.6003 sd 0.0369 | erank  15.32 | train  5.77e-08 | steps    333 | 
+lr=0.1     p=0.75  | rec  0.5458 sd 0.0238 | erank  13.97 | train  5.43e-08 | steps    266 | 
+lr=0.1     p=0.5   | rec  0.5545 sd 0.0139 | erank  13.75 | train  6.02e-08 | steps    266 | 
+lr=0.1     p=0.25  | rec  0.5756 sd 0.0081 | erank  13.94 | train  3.03e-08 | steps    333 | 
+lr=0.1     p=0     | rec  0.6174 sd 0.0205 | erank  14.77 | train  5.46e-08 | steps    266 | 
+----------------------------------------------------------------------------------------------------------------
+
+FIXED-LR MATRIX (recovery; * = interpolates, d = diverged, n = misses bar):
+      lr | p=1           | p=0.75        | p=0.5         | p=0.25        | p=0          
+   0.001 | 0.5764* (14.4) | 0.4588* (11.1) | 0.3481* (8.2) | 0.2595* (6.4) | 0.2010* (5.4)
+   0.003 | 0.5704* (14.5) | 0.4730* (11.5) | 0.3824* (8.9) | 0.3083* (7.2) | 0.2559* (6.2)
+    0.01 | 0.5734* (14.4) | 0.5000* (12.0) | 0.4405* (10.0) | 0.3922* (8.7) | 0.3566* (8.0)
+    0.03 | 0.5809* (14.5) | 0.5359* (12.9) | 0.5135* (11.8) | 0.4996* (11.2) | 0.4929* (10.9)
+     0.1 | 0.6003* (15.3) | 0.5458* (14.0) | 0.5545* (13.8) | 0.5756* (13.9) | 0.6174* (14.8)
+
+VERDICT per fixed lr (monotone restoration in p over interpolating cells):
+  lr=0.001  : full sweep interpolates | recovery monotone: True (0.576 -> 0.201) | erank monotone: True (14.4 -> 5.4)
+  lr=0.003  : full sweep interpolates | recovery monotone: True (0.570 -> 0.256) | erank monotone: True (14.5 -> 6.2)
+  lr=0.01   : full sweep interpolates | recovery monotone: True (0.573 -> 0.357) | erank monotone: True (14.4 -> 8.0)
+  lr=0.03   : full sweep interpolates | recovery monotone: True (0.581 -> 0.493) | erank monotone: True (14.5 -> 10.9)
+  lr=0.1    : full sweep interpolates | recovery monotone: False (0.600 -> 0.617) | erank monotone: False (15.3 -> 14.8)
+
+[done in 0.2 min]
