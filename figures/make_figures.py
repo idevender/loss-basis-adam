@@ -191,7 +191,7 @@ def fig_phase():
                 arrowprops=dict(arrowstyle="->", color=C["adam"], lw=1.0,
                                 connectionstyle="arc3,rad=-0.2"))
 
-    ax.set_xlabel(r"target tail fraction $\tau$   ($\tau^2$ = fraction of energy off the rank-3 subspace)")
+    ax.set_xlabel(r"target tail amplitude $\tau$   ($\tau^2$ = fraction of target energy in the tail)")
     ax.set_ylabel("recovery error")
     ax.set_ylim(0, 1.0)
     ax.set_xlim(-0.01, 0.52)
