@@ -16,8 +16,11 @@ env/
 .vscode/
 .idea/
 
-# Data (see README for where to obtain the public datasets)
+# Data (see README for where to obtain the public datasets). Both spellings: the
+# bare name also catches the case where data is a symlink to an external root,
+# which "data/" does not match.
 data/
+data
 *.mat
 *.npy
 *.npz

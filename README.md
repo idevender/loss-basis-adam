@@ -48,7 +48,7 @@ pytest -q tests/test_paper_identities.py      # 25 tests, 41 parametrized runs
 This is a numerical check at float tolerance on random instances, not a formal proof, and it says
 nothing about the empirical tables — but it rules out the algebra slips in stated identities that
 quietly sink theory papers. Test names carry the current manuscript's numbering (for example
-`test_thm410_transfer_theorem_time_change_direction` for the transfer theorem, Theorem 4.10).
+`test_thm46_transfer_theorem_time_change_direction` for the transfer theorem, Theorem 4.6).
 
 ## The optimizer
 
@@ -108,31 +108,32 @@ python optimizer_zoo_bias.py
 | Script | Paper | What it shows |
 | --- | --- | --- |
 | `optimizer_zoo_bias.py` | Section 5 | Optimizer-zoo map: the equivariant/coordinate-wise split in recovery |
-| `zoo_lr_sensitivity.py` | Section 5.1, App C2 | Learning-rate curves for the optimizer-zoo comparison |
-| `zoo_decay_control.py` | App C1 | Schedule symmetrization: split survives cosine-for-all |
-| `zoo_init_scale.py` | App C3 | Split persists across initialization scales |
+| `zoo_lr_sensitivity.py` | Section 5, App D.2 | Learning-rate curves for the optimizer-zoo comparison |
+| `zoo_decay_control.py` | App D.1 | Schedule symmetrization: split survives cosine-for-all |
+| `zoo_init_scale.py` | App D.4 | Split persists across initialization scales |
 | `zoo_size_check.py` | Section 5 | The ordering survives a second size and rank |
-| `precond_dial_scalar_check.py` | Section 6 | The anisotropy dial `p: 1 -> 0` under both scalar conventions |
-| `equivariance_balance_probe.py` | Section 6 | Gauge product-drift and the balancedness invariant |
+| `nuclear_norm_reference.py` | Section 5, Table 2 | Min-nuclear-norm interpolant on the same three instances: the reference row |
+| `precond_dial_scalar_check.py` | Section 7 | The anisotropy dial `p: 1 -> 0` under both scalar conventions |
+| `equivariance_balance_probe.py` | Section 7 | Gauge product-drift and the balancedness invariant |
 | `muon_shampoo_bias_probe.py` | Section 5 | Muon and Shampoo preserve the bias (geometry, not balancedness) |
 | `muon_phase_diagram.py` | Section 8 | Spectral-tail phase diagram: Muon's two regimes and the crossing |
-| `phase_diagram_decay_control.py` | App C1 | Schedule control for the phase diagram |
-| `signum_c9_audit.py` | App C9 | Recovery without equivariance: annealed sign descent |
+| `phase_diagram_decay_control.py` | App D.1 | Schedule control for the phase diagram |
+| `signum_c9_audit.py` | App D.10 | Recovery without equivariance: annealed sign descent |
 | `restoration_probe.py` | (shared) | The matrix-sensing testbed used across the sensing experiments |
-| `attention_gauge.py` | Section 7 | Attention-gauge onset: Adam splits after one step; SGD/scalar-Adam stay at numerical scale, while Muon gauge and noise twins can both diverge under numerical chaos |
-| `attention_gauge_multiseed.py` | App C4 | Attention gauge across seeds, gauge draws, and noise scales |
+| `attention_gauge.py` | Section 6 | Attention-gauge onset: Adam splits after one step; SGD/scalar-Adam stay at numerical scale, while Muon gauge and noise twins can both diverge under numerical chaos |
+| `attention_gauge_multiseed.py` | App D.5 | Attention gauge across seeds, gauge draws, and noise scales |
 | `hyperspectral_completion.py` | Legacy smoke test | Indian Pines loader and exploratory CPU smoke test; configuration selection is test-informed and it is not a paper result |
 | `hyperspectral_wilson_v2.py` | Legacy protocol | Earlier fixed-learning-rate matched-loss protocol, retained for comparison |
-| `hyperspectral_wilson_v3.py` | Section 9, App C5 | Canonical CPU Indian Pines reproduction: matched loss with train-only learning-rate selection |
+| `hyperspectral_wilson_v3.py` | Section 9, App D.6 | Canonical CPU Indian Pines reproduction: matched loss with train-only learning-rate selection |
 | `flowadam_upgrade.py` | Section 10 (legacy scalar) | FlowAdam-p under the legacy geometric-mean scalar; robustness comparison, not the reported numbers |
 | `flowadam_upgrade_rms.py` | Section 10 (canonical) | FlowAdam-p under the paper's RMS scalar; the source of the reported Section 10 numbers |
-| `flowadam_p_interp_control.py` | App C7 | Interpolation control (not an early-stopping artifact) |
+| `flowadam_p_interp_control.py` | App D.8 | Interpolation control (not an early-stopping artifact) |
 
 For the paper's CPU real-data protocol, use `hyperspectral_wilson_v3.py`. The two legacy scripts
 remain for loader coverage and protocol comparison; they are not the source of the paper's reported
 real-data numbers.
 
-### The H100 replication ladder (Appendix C8)
+### The H100 replication ladder (Appendix D.9)
 
 `experiments/nibi/` is a self-contained GPU suite (device- and dtype-agnostic ports of the CPU
 protocols). Run the drivers, then aggregate:

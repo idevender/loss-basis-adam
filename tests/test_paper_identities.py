@@ -126,7 +126,7 @@ def test_lemma41_gradient_covariance_by_autograd():
 
 
 def test_corollary_depth_interface_gauge_covariance():
-    """Corollary 4.9.  For W = U1 U2 U3 the interface gauge (Ui Q, Q^T U(i+1)) leaves the loss
+    """Corollary A.3.  For W = U1 U2 U3 the interface gauge (Ui Q, Q^T U(i+1)) leaves the loss
     invariant and transforms the two gradients covariantly on the acted side."""
     g = torch.Generator().manual_seed(31)
     d, k1, k2 = 5, 4, 4
@@ -462,7 +462,7 @@ def test_prop44_scalar_witness_products():
 
 
 # --------------------------------------------------------------------------------------------
-# Theorem 4.6 and Proposition 4.7: structure and the spectral transfer function
+# Theorem 4.5 and Proposition A.1: structure and the spectral transfer function
 # --------------------------------------------------------------------------------------------
 
 def msign(M):
@@ -470,8 +470,8 @@ def msign(M):
     return A @ Bh
 
 
-def test_thm46_equivariant_map_is_gram_determined_left_preconditioner():
-    """Theorem 4.6.  For an equivariant Phi, X(G) = Phi(G) G^+ must be gauge-invariant and a
+def test_thm45_equivariant_map_is_gram_determined_left_preconditioner():
+    """Theorem 4.5.  For an equivariant Phi, X(G) = Phi(G) G^+ must be gauge-invariant and a
     function of G G^T alone; and the proof's Q := G1^+ G2 must be orthogonal when the Grams agree."""
     g = torch.Generator().manual_seed(77)
     n, k = 7, 4
@@ -495,8 +495,8 @@ def test_thm46_equivariant_map_is_gram_determined_left_preconditioner():
     assert rel(H(G @ G.T) @ (G @ Q), (H(G @ G.T) @ G) @ Q) < EXACT
 
 
-def test_prop47_spectral_transfer_function():
-    """Proposition 4.7.  psi(GG^T) G must equal sum_i h(sigma_i) u_i v_i^T with h(s) = psi(s^2) s."""
+def test_propa1_spectral_transfer_function():
+    """Proposition A.1.  psi(GG^T) G must equal sum_i h(sigma_i) u_i v_i^T with h(s) = psi(s^2) s."""
     g = torch.Generator().manual_seed(101)
     n, k = 6, 4
     G = torch.randn(n, k, generator=g)
@@ -514,8 +514,8 @@ def test_prop47_spectral_transfer_function():
         assert rel(lhs, rhs) < 1e-9
 
 
-def test_prop47_undamped_shampoo_one_step_equals_msign():
-    """The identity displayed in the proof of Proposition 4.7:
+def test_propa1_undamped_shampoo_one_step_equals_msign():
+    """The identity displayed in the proof of Proposition A.1:
     (GG^T)^-1/4 G (G^T G)^-1/4 = msign(G) on the support."""
     g = torch.Generator().manual_seed(202)
     for n, k in ((6, 4), (5, 5), (4, 6)):
@@ -530,7 +530,7 @@ def test_prop47_undamped_shampoo_one_step_equals_msign():
         assert rel(lhs, msign(G)) < 1e-9
 
 
-def test_prop47_lipschitz_witness_diverges_for_flat_schedules_only():
+def test_propa1_lipschitz_witness_diverges_for_flat_schedules_only():
     """Consequence (ii): the quotient |h(delta)|/delta at G_pm = diag(1, +-delta) must blow up as
     delta -> 0 for the exact polar map and stay bounded (= eta) for GD."""
     quotients_msign, quotients_gd = [], []
@@ -562,7 +562,7 @@ def test_muon_newton_schulz_equivariance_at_every_truncation():
 def test_shampoo_step_matches_the_displayed_two_sided_rule():
     """Proposition 4.2(4) as displayed: Delta = (L+lam I)^-1/4 G (R+lam I)^-1/4, with BOTH roots.
     Dropping the right root would leave the rule gauge-equivariant (it is then a Gram-determined
-    left preconditioner, Theorem 4.6), so the equivariance tests cannot detect that error and
+    left preconditioner, Theorem 4.5), so the equivariance tests cannot detect that error and
     the shape of the rule has to be pinned against the display directly."""
     A, y, n, k = make_problem(seed=17)
     U, V = make_factors(n, k, seed=17)
@@ -599,7 +599,7 @@ def test_shampoo_spectral_function_commutes_with_conjugation():
 
 
 # --------------------------------------------------------------------------------------------
-# Theorem 4.10 (transfer) and Proposition 4.12 (balancedness): the two dynamical claims
+# Theorem 4.6 (transfer) and Proposition A.4 (balancedness): the two dynamical claims
 # --------------------------------------------------------------------------------------------
 
 def rk4(f, x0, t0, t1, n_steps):
@@ -615,8 +615,8 @@ def rk4(f, x0, t0, t1, n_steps):
     return x
 
 
-def test_thm410_transfer_theorem_time_change_direction():
-    """Theorem 4.10.  The scalar-preconditioned flow at physical time T must coincide with
+def test_thm46_transfer_theorem_time_change_direction():
+    """Theorem 4.6.  The scalar-preconditioned flow at physical time T must coincide with
     gradient flow at reparameterised time tau(T) = int_0^T du/a(u).  The negative control uses
     the opposite time change, int_0^T a du, which must NOT match -- this is the error the test
     exists to catch."""
@@ -654,8 +654,8 @@ def test_thm410_transfer_theorem_time_change_direction():
     assert rel(theta_pre, theta_wrong) > 1e-3, "the inverse time change must not also work"
 
 
-def test_prop412_balancedness_conserved_by_scalar_class_broken_by_anisotropy():
-    """Proposition 4.12.  B = U^T U - V^T V is conserved under gradient flow and under any
+def test_propa4_balancedness_conserved_by_scalar_class_broken_by_anisotropy():
+    """Proposition A.4.  B = U^T U - V^T V is conserved under gradient flow and under any
     COMMON positive scalar preconditioner, and drifts once the two factors see different
     diagonal preconditioners."""
     A, y, n, k = make_problem(seed=12)
