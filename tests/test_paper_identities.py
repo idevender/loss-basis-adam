@@ -77,11 +77,11 @@ def rel(a, b):
 
 
 # --------------------------------------------------------------------------------------------
-# Lemma 3.1 / Definition 3.1: the gauge, and why O(k) is the maximal isometric part
+# Lemma 3.2 / Definition 3.1: the gauge, and why O(k) is the maximal isometric part
 # --------------------------------------------------------------------------------------------
 
-def test_lemma31_gl_preserves_product_but_only_ok_is_isometric():
-    """Lemma 3.1.  (U,V) -> (UA, VA^-T) preserves UV^T for all A in GL(k); it preserves
+def test_lemma32_gl_preserves_product_but_only_ok_is_isometric():
+    """Lemma 3.2.  (U,V) -> (UA, VA^-T) preserves UV^T for all A in GL(k); it preserves
     ||U||_F^2 + ||V||_F^2 iff A is orthogonal."""
     A_, y, n, k = make_problem()
     U, V = make_factors(n, k)
@@ -107,8 +107,8 @@ def test_lemma31_gl_preserves_product_but_only_ok_is_isometric():
     assert abs((Uq.norm() ** 2 + Vq.norm() ** 2 - U.norm() ** 2 - V.norm() ** 2).item()) < 1e-10
 
 
-def test_lemma32_gradient_covariance_by_autograd():
-    """Lemma 3.2.  grad_U L(UQ, VQ) = (grad_U L(U,V)) Q, and likewise for V.  Both sides from
+def test_lemma41_gradient_covariance_by_autograd():
+    """Lemma 4.1.  grad_U L(UQ, VQ) = (grad_U L(U,V)) Q, and likewise for V.  Both sides from
     autograd on the real sensing loss, not from the analytic formula."""
     A, y, n, k = make_problem()
     U, V = make_factors(n, k)
@@ -126,7 +126,7 @@ def test_lemma32_gradient_covariance_by_autograd():
 
 
 def test_corollary_depth_interface_gauge_covariance():
-    """Corollary 4.10.  For W = U1 U2 U3 the interface gauge (Ui Q, Q^T U(i+1)) leaves the loss
+    """Corollary 4.9.  For W = U1 U2 U3 the interface gauge (Ui Q, Q^T U(i+1)) leaves the loss
     invariant and transforms the two gradients covariantly on the acted side."""
     g = torch.Generator().manual_seed(31)
     d, k1, k2 = 5, 4, 4
@@ -276,12 +276,12 @@ def run_steps(rule, U0, V0, A, y, lr, steps):
 
 
 # --------------------------------------------------------------------------------------------
-# Propositions 4.1 and 4.2: the classification, positive and negative
+# Propositions 4.2 and 4.3: the classification, positive and negative
 # --------------------------------------------------------------------------------------------
 
 @pytest.mark.parametrize("name", sorted(EQUIVARIANT))
-def test_prop41_equivariant_rules_commute_with_the_gauge_over_many_steps(name):
-    """Proposition 4.1.  Running the rule from (U0 Q, V0 Q) must give exactly (Ut Q, Vt Q) for
+def test_prop42_equivariant_rules_commute_with_the_gauge_over_many_steps(name):
+    """Proposition 4.2.  Running the rule from (U0 Q, V0 Q) must give exactly (Ut Q, Vt Q) for
     every t, with the optimizer's own state (momentum, EMA, Shampoo accumulators) live."""
     A, y, n, k = make_problem()
     U0, V0 = make_factors(n, k)
@@ -300,8 +300,8 @@ def test_prop41_equivariant_rules_commute_with_the_gauge_over_many_steps(name):
 
 
 @pytest.mark.parametrize("name", sorted(COORDINATE_WISE))
-def test_prop42_coordinatewise_rules_break_the_gauge_at_step_one(name):
-    """Proposition 4.2.  The zero-state first step must already violate equivariance, and by a
+def test_prop43_coordinatewise_rules_break_the_gauge_at_step_one(name):
+    """Proposition 4.3.  The zero-state first step must already violate equivariance, and by a
     margin far above float noise -- otherwise the paper's dichotomy is not observable."""
     A, y, n, k = make_problem()
     U0, V0 = make_factors(n, k)
@@ -330,8 +330,8 @@ def test_prop42_scalar_adam_is_the_repair_of_adam():
     assert err["scalar_adam"] < LOOSE < BROKEN < err["adam"]
 
 
-def test_prop41_scalar_ema_equals_mean_of_the_entrywise_ema():
-    """Proof of Proposition 4.1(2): because the mean is linear it commutes with the EMA, so
+def test_prop42_scalar_ema_equals_mean_of_the_entrywise_ema():
+    """Proof of Proposition 4.2(2): because the mean is linear it commutes with the EMA, so
     storing one scalar changes no number relative to averaging Adam's entrywise v."""
     A, y, n, k = make_problem()
     U, V = make_factors(n, k)
@@ -363,8 +363,8 @@ def test_prop41_scalar_ema_equals_mean_of_the_entrywise_ema():
     assert abs(st["nu"] - nu_ref) / nu_ref < 1e-13, "nu must pool g^2 over both factors"
 
 
-def test_prop42_sign_witness_from_the_proof():
-    """The theta = pi/4 counterexample printed in the proof of Proposition 4.2."""
+def test_prop43_sign_witness_from_the_proof():
+    """The theta = pi/4 counterexample printed in the proof of Proposition 4.3."""
     G = torch.tensor([[1.0, 1.0]])
     c = s = 1 / math.sqrt(2)
     Q = torch.tensor([[c, s], [-s, c]])
@@ -374,8 +374,8 @@ def test_prop42_sign_witness_from_the_proof():
     assert (torch.sign(G @ Q) - torch.sign(G) @ Q).norm() > 0.4
 
 
-def test_prop42_adafactor_witness_matrices_from_the_proof():
-    """The three displayed matrices in the Adafactor half of the proof of Proposition 4.2,
+def test_prop43_adafactor_witness_matrices_from_the_proof():
+    """The three displayed matrices in the Adafactor half of the proof of Proposition 4.3,
     recomputed from Adafactor's definition rather than copied."""
     for e in (0.1, 0.3, 0.5, 2.0):
         G = torch.tensor([[1.0, 0.0], [0.0, e]])
@@ -548,7 +548,7 @@ def test_prop47_lipschitz_witness_diverges_for_flat_schedules_only():
 
 
 def test_muon_newton_schulz_equivariance_at_every_truncation():
-    """Proposition 4.1(3).  Equivariance must hold exactly at every finite Newton-Schulz
+    """Proposition 4.2(3).  Equivariance must hold exactly at every finite Newton-Schulz
     truncation, for tall, square and wide gradients (the repo transposes tall inputs)."""
     g = torch.Generator().manual_seed(303)
     for n, k in ((8, 4), (5, 5), (3, 6)):
@@ -560,7 +560,7 @@ def test_muon_newton_schulz_equivariance_at_every_truncation():
 
 
 def test_shampoo_step_matches_the_displayed_two_sided_rule():
-    """Proposition 4.1(4) as displayed: Delta = (L+lam I)^-1/4 G (R+lam I)^-1/4, with BOTH roots.
+    """Proposition 4.2(4) as displayed: Delta = (L+lam I)^-1/4 G (R+lam I)^-1/4, with BOTH roots.
     Dropping the right root would leave the rule gauge-equivariant (it is then a Gram-determined
     left preconditioner, Theorem 4.6), so the equivariance tests cannot detect that error and
     the shape of the rule has to be pinned against the display directly."""
@@ -585,7 +585,7 @@ def test_shampoo_step_matches_the_displayed_two_sided_rule():
 
 
 def test_shampoo_spectral_function_commutes_with_conjugation():
-    """Proof of Proposition 4.1(4): h(Q^T R Q) = Q^T h(R) Q for h(R) = (R + lam I)^-1/4,
+    """Proof of Proposition 4.2(4): h(Q^T R Q) = Q^T h(R) Q for h(R) = (R + lam I)^-1/4,
     damping included."""
     g = torch.Generator().manual_seed(404)
     k = 5
@@ -599,7 +599,7 @@ def test_shampoo_spectral_function_commutes_with_conjugation():
 
 
 # --------------------------------------------------------------------------------------------
-# Theorem 4.9 (transfer) and Proposition 4.11 (balancedness): the two dynamical claims
+# Theorem 4.10 (transfer) and Proposition 4.12 (balancedness): the two dynamical claims
 # --------------------------------------------------------------------------------------------
 
 def rk4(f, x0, t0, t1, n_steps):
@@ -615,8 +615,8 @@ def rk4(f, x0, t0, t1, n_steps):
     return x
 
 
-def test_thm49_transfer_theorem_time_change_direction():
-    """Theorem 4.9.  The scalar-preconditioned flow at physical time T must coincide with
+def test_thm410_transfer_theorem_time_change_direction():
+    """Theorem 4.10.  The scalar-preconditioned flow at physical time T must coincide with
     gradient flow at reparameterised time tau(T) = int_0^T du/a(u).  The negative control uses
     the opposite time change, int_0^T a du, which must NOT match -- this is the error the test
     exists to catch."""
@@ -654,8 +654,8 @@ def test_thm49_transfer_theorem_time_change_direction():
     assert rel(theta_pre, theta_wrong) > 1e-3, "the inverse time change must not also work"
 
 
-def test_prop411_balancedness_conserved_by_scalar_class_broken_by_anisotropy():
-    """Proposition 4.11.  B = U^T U - V^T V is conserved under gradient flow and under any
+def test_prop412_balancedness_conserved_by_scalar_class_broken_by_anisotropy():
+    """Proposition 4.12.  B = U^T U - V^T V is conserved under gradient flow and under any
     COMMON positive scalar preconditioner, and drifts once the two factors see different
     diagonal preconditioners."""
     A, y, n, k = make_problem(seed=12)
@@ -689,10 +689,10 @@ def test_prop411_balancedness_conserved_by_scalar_class_broken_by_anisotropy():
 
 
 # --------------------------------------------------------------------------------------------
-# Proposition 4.14: the solvable two-timescale boundary
+# Proposition 8.1: the solvable two-timescale boundary
 # --------------------------------------------------------------------------------------------
 
-def test_prop414_greedy_closed_form_matches_numerical_integration():
+def test_prop81_greedy_closed_form_matches_numerical_integration():
     """Part (i): w(t) = s (1 + (s/w0 - 1) e^{-2 eta s t})^-1 must solve dw/dt = 2 eta w (s - w)."""
     for s, w0, eta in ((1.0, 1e-3, 0.7), (0.4, 1e-5, 2.0), (2.5, 0.1, 0.3)):
         closed = lambda t: s / (1 + (s / w0 - 1) * math.exp(-2 * eta * s * t))
@@ -701,7 +701,7 @@ def test_prop414_greedy_closed_form_matches_numerical_integration():
             assert abs(num.item() - closed(T)) / closed(T) < 1e-9
 
 
-def test_prop414_greedy_tail_bound_holds_and_is_not_vacuous():
+def test_prop81_greedy_tail_bound_holds_and_is_not_vacuous():
     """Part (i): at head fit T1 the tail obeys w2(T1) <= C_{delta,rho} s1 (w0/s1)^{1-rho} with
     C = 2 ((1-delta)/delta)^rho, over a grid respecting 0 < w0 <= s2/2 and 0 < delta < 1 - s2/s1."""
     eta = 1.0
@@ -725,7 +725,7 @@ def test_prop414_greedy_tail_bound_holds_and_is_not_vacuous():
     assert checked >= 10
 
 
-def test_prop414_greedy_tail_vanishes_as_init_shrinks():
+def test_prop81_greedy_tail_vanishes_as_init_shrinks():
     """Part (i): the transient head-tail separation sharpens without bound as w0 -> 0."""
     eta, s1, s2, delta = 1.0, 1.0, 0.5, 0.2
     prev = None
@@ -739,7 +739,7 @@ def test_prop414_greedy_tail_vanishes_as_init_shrinks():
     assert prev < 1e-3 * s2
 
 
-def test_prop414_equal_rate_fits_the_tail_before_head_fit_regardless_of_w0():
+def test_prop81_equal_rate_fits_the_tail_before_head_fit_regardless_of_w0():
     """Part (ii): sqrt(w) grows linearly and caps at s, so w2(T1) = s2 exactly, with no
     dependence on w0 whenever delta < 1 - s2/s1."""
     eta = 1.0
@@ -769,7 +769,7 @@ def test_prop414_equal_rate_fits_the_tail_before_head_fit_regardless_of_w0():
     assert (math.sqrt(w0) + eta * T1_bad) ** 2 < s2, "hypothesis must be necessary"
 
 
-def test_prop414_the_two_schedules_actually_disagree():
+def test_prop81_the_two_schedules_actually_disagree():
     """The proposition is only interesting if the two schedules give different tails at head
     fit: greedy leaves the tail asleep where equal-rate has already fully fit it."""
     eta, s1, s2, delta, w0 = 1.0, 1.0, 0.5, 0.2, 1e-6
