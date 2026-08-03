@@ -26,19 +26,11 @@ and depends on hardware. The replication ladder (`experiments/nibi/`) is intende
 
 `tests/test_paper_identities.py` numerically verifies essentially every constructive mathematical
 statement in the paper. Each test names the paper object it checks and evaluates *both* sides of
-the claimed identity in float64 at random points — from a real loss, real autograd gradients, and
+the claimed identity in float64 at random points - from a real loss, real autograd gradients, and
 the real update rules (Muon's Newton–Schulz iteration and Shampoo's inverse roots are imported from
 the experiment code that produced the tables) — then asserts agreement at machine precision. Every
 positive claim is paired with a negative control that must *fail* the same check, so a harness bug
 that trivially equated the two runs would not pass silently.
-
-The suite covers: gradient covariance by autograd; multi-step equivariance of all four equivariant
-rules; the step-1 gauge break for all five coordinate-wise rules; the exact witness matrices printed
-in the proofs (the sign witness, the Adafactor matrices, the scalar one-step products); the
-Gram-determined structure theorem; the spectral transfer function; one-step undamped Shampoo =
-`msign`; Newton–Schulz equivariance at every truncation; the transfer theorem's time change;
-balancedness conservation and its anisotropic drift; and both halves of the greedy/equal-rate
-boundary proposition, including non-vacuousness of its tail bound.
 
 ```bash
 pip install -r requirements.txt
