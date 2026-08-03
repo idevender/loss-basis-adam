@@ -11,9 +11,8 @@ destroy it.
 Testbed: wd=0 sensing ladder (40x40, rank 3, k=40, m = 2 x dof), small init, run to interpolation,
 3 seeds. Reports recovery error, effective rank, and the balancedness invariant ||U^T U - V^T V||_F.
 
-Every (method, lr, seed) run is written to logs/optimizer_zoo_bias.jsonl, and the selected rows to
-the trailing "selected" record. That file, not a literal in the plotting script, is what
-figures/make_figures.py:fig_zoo reads, so Table 2 and Figure 1 are checkable against raw output.
+Writes every (method, lr, seed) run to logs/optimizer_zoo_bias.jsonl; make_figures.py reads that
+file rather than literals, so Figure 1 and Table 2 cannot drift from the raw output.
 """
 from __future__ import annotations
 import json, math, os, sys, time
@@ -148,12 +147,7 @@ def run(kind, seed, lr):
 
 
 def best(kind, lrs, sink=None):
-    """Pick the lr that interpolates with the lowest recovery; fall back to the lowest train loss.
-
-    "Interpolates" is TRAIN_TOL, the same 1e-7 bar the run loop stops on and the paper's Section 5
-    quotes -- not a looser gate. The bar is applied to the worst of the three seeds, so a rate that
-    interpolates on average but stalls on one seed cannot win.
-    """
+    """Lowest recovery among lrs clearing TRAIN_TOL on the worst seed; else lowest train loss."""
     best_row = None
     for lr in lrs:
         per = [run(kind, s, lr) for s in SEEDS]
@@ -175,11 +169,7 @@ def best(kind, lrs, sink=None):
 
 
 def write_jsonl(sink, res, configs):
-    """Archive the grid: one record per (method, lr, seed), then the selected row per method.
-
-    The selected records carry the same means Table 2 prints, so a reader can recompute the
-    selection from the grid records and check it lands on the same rows.
-    """
+    """Archive the grid: one record per (method, lr, seed), then Table 2's selected row per method."""
     os.makedirs(os.path.dirname(JSONL), exist_ok=True)
     with open(JSONL, 'w') as fh:
         fh.write(json.dumps(dict(kind='meta', exp='optimizer_zoo_bias', n=N, rank=R_STAR, k=K,

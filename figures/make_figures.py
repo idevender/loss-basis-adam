@@ -3,9 +3,9 @@
 Renders the attention-gauge, dial, phase-diagram, and zoo-map figures as vector PDFs, using a
 colorblind-safe palette with one fixed hue per entity and serif typography matched to the paper body.
 The plotted numbers are the final experiment outputs; the dial uses the RMS
-(exactly-equivariant-at-p=0) convention. The zoo map reads logs/optimizer_zoo_bias.jsonl and
-recomputes Table 2's learning-rate selection from it; the remaining three carry their run's
-numbers inline, each labelled with the archived file it was transcribed from.
+(exactly-equivariant-at-p=0) convention. The zoo map recomputes Table 2's selection from
+logs/optimizer_zoo_bias.jsonl; the other three carry their run's numbers inline, each labelled
+with the archived file it came from.
 
 Writes vector PDFs into this directory. These are the exact figures the manuscript includes; copy
 them into the paper tree when they change.
@@ -30,8 +30,7 @@ EQ_FILL, CW_FILL = "#0072B2", "#D55E00"        # cluster identities
 INK, MUTE, FAINT = "#1A1A1A", "#5A5A5A", "#9A9A9A"
 
 plt.rcParams.update({
-    # Sized against the 10pt paper body: axis labels sit just under it, ticks and annotations
-    # below that. The figures print at ~1:1, so these are the sizes that land on the page.
+    # Sized against the 10pt paper body; the figures print at ~1:1.
     "font.size": 9.5,
     "font.family": "serif",
     "font.serif": ["Times New Roman", "Nimbus Roman No9 L", "DejaVu Serif"],
@@ -63,12 +62,7 @@ ZOO_LABELS = {"muon": "Muon", "gd": "GD", "adam_p0rms": "scalar-Adam ($p{=}0$)",
 
 
 def zoo_rows():
-    """Read the archived zoo grid and re-derive Table 2's selection from it.
-
-    The nine bars used to be literals here. They now come from the run's own output, and the
-    selection is recomputed from the per-(method, lr, seed) records rather than trusted, so a
-    figure can only disagree with the table by disagreeing with the raw data first.
-    """
+    """Read the archived zoo grid and re-derive Table 2's selection from it, asserting they agree."""
     import json
     grid, selected = [], {}
     with open(ZOO_JSONL) as fh:
@@ -218,8 +212,7 @@ def fig_phase():
         shampoo=[0.083, 0.083, 0.096, 0.090, 0.039, 0.035],
     )
     names = dict(gd="GD", adam="Adam", muon="Muon", shampoo="Shampoo")
-    # Narrower than the other full-width panels on purpose: nothing (legend, second panel) eats
-    # this one's width, so running it to \linewidth flattens the tau*=0.2 crossover it exists to show.
+    # Deliberately narrow: at \linewidth the tau*=0.2 crossover this figure exists to show flattens.
     fig, ax = plt.subplots(figsize=(4.15, 2.32))
     for k in ("adam", "shampoo", "gd", "muon"):
         r, s = np.array(rec[k]), np.array(std[k])

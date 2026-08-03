@@ -305,13 +305,10 @@ def load_cells(path):
 
 
 def select_lr(cells, prefer='rec'):
-    """Local best(): among lrs whose mean train clears the interpolation bar, lowest mean recovery;
-    else lowest (rec + 10 + train). cells: list of dicts with lr, rec, train.
+    """Lowest mean recovery among lrs whose mean train clears TRAIN_TOL; else lowest rec+10+train.
 
-    The bar is TRAIN_TOL, the same 1e-7 the runs stop on and the one the paper's selection rule
-    quotes ("best average recovery among the interpolating rates"). LOOSE_TOL is a reporting
-    label for rows that got close, and must not gate selection: a rate that stalls at 1e-5 is
-    not an interpolating rate, however good its recovery looks."""
+    Gate on TRAIN_TOL, never LOOSE_TOL: the latter only labels near-misses in reports.
+    """
     by_lr = {}
     for c in cells:
         by_lr.setdefault(c['lr'], []).append(c)

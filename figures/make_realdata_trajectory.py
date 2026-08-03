@@ -44,8 +44,7 @@ def load():
 
 def select_lr(rows, opt):
     """Appendix C.5's train-only rule: deepest matched train level reached by every seed,
-    ties broken by fewest steps.  No held-out quantity enters, and only the two selection
-    seeds do -- seeds 456 and 789 are fresh at the selected rate, so they must not vote on it."""
+    ties broken by fewest steps.  SEL_SEEDS only, so 456 and 789 stay held out."""
     by_lr = {}
     for r in rows:
         if r["opt"] != opt or r["seed"] not in SEL_SEEDS:
