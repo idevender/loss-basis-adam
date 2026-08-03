@@ -305,8 +305,13 @@ def load_cells(path):
 
 
 def select_lr(cells, prefer='rec'):
-    """Local best(): among lrs whose mean train < 1e-4, lowest mean recovery;
-    else lowest (rec + 10 + train). cells: list of dicts with lr, rec, train."""
+    """Local best(): among lrs whose mean train clears the interpolation bar, lowest mean recovery;
+    else lowest (rec + 10 + train). cells: list of dicts with lr, rec, train.
+
+    The bar is TRAIN_TOL, the same 1e-7 the runs stop on and the one the paper's selection rule
+    quotes ("best average recovery among the interpolating rates"). LOOSE_TOL is a reporting
+    label for rows that got close, and must not gate selection: a rate that stalls at 1e-5 is
+    not an interpolating rate, however good its recovery looks."""
     by_lr = {}
     for c in cells:
         by_lr.setdefault(c['lr'], []).append(c)
@@ -316,7 +321,7 @@ def select_lr(cells, prefer='rec'):
         tr = float(np.mean([r['train'] for r in rows]))
         if not (np.isfinite(rec) and np.isfinite(tr)):
             continue
-        score = rec if tr < LOOSE_TOL else rec + 10 + tr
+        score = rec if tr < TRAIN_TOL else rec + 10 + tr
         if best_score is None or score < best_score:
             best_lr, best_score = lr, score
     return best_lr

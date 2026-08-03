@@ -39,7 +39,7 @@ def best(kind, init):
             er = np.mean([p['er'] for p in per])
             if not (np.isfinite(rec) and np.isfinite(tr)):
                 continue
-            score = rec if tr < 1e-4 else rec + 10 + tr
+            score = rec if tr < zoo.TRAIN_TOL else rec + 10 + tr
             if best_row is None or score < best_row['score']:
                 best_row = dict(score=score, rec=rec, tr=tr, er=er, lr=lr)
         return best_row or dict(rec=np.nan, tr=np.nan, er=np.nan, lr=np.nan)

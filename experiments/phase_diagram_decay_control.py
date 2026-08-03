@@ -50,7 +50,7 @@ def best(kind, tau, decay):
         recs = [p['rec'] for p in per]
         if not (np.isfinite(rec) and np.isfinite(tr)):
             continue
-        score = rec if tr < 1e-4 else rec + 10 + tr
+        score = rec if tr < mpd.TRAIN_TOL else rec + 10 + tr
         if best_row is None or score < best_row['score']:
             best_row = dict(score=score, rec=rec, tr=tr, er=er, lr=lr,
                             rec_std=float(np.std(recs)))

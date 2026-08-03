@@ -92,6 +92,7 @@ currently accepts one parameter group.
 flowadam/            the optimizer package
 experiments/         CPU experiments (the mechanism-identification suite)
 experiments/nibi/    the H100 replication ladder (GPU)
+logs/                checked-in stdout and JSONL from the CPU runs
 figures/             paper-figure generation
 tests/               numerical verification of every identity in the paper
 ```
@@ -113,7 +114,8 @@ python optimizer_zoo_bias.py
 | `zoo_init_scale.py` | App D.4 | Split persists across initialization scales |
 | `zoo_size_check.py` | Section 5 | The ordering survives a second size and rank |
 | `nuclear_norm_reference.py` | Section 5, Table 2 | Min-nuclear-norm interpolant on the same three instances: the reference row |
-| `precond_dial_scalar_check.py` | Section 7 | The anisotropy dial `p: 1 -> 0` under both scalar conventions |
+| `precond_dial_scalar_check.py` | Section 7, Figure 3 | The anisotropy dial `p: 1 -> 0` under both scalar conventions; the envelope arm plotted in Figure 3 |
+| `precond_dial_fixed_lr.py` | Section 7, App C | The dial's fixed-step arm: the full `p`-sweep repeated at each single rate of the shared grid (checked-in output in `precond_dial_fixed_lr.log`) |
 | `equivariance_balance_probe.py` | Section 7 | Gauge product-drift and the balancedness invariant |
 | `muon_shampoo_bias_probe.py` | Section 5 | Muon and Shampoo preserve the bias (geometry, not balancedness) |
 | `muon_phase_diagram.py` | Section 8 | Spectral-tail phase diagram: Muon's two regimes and the crossing |
@@ -125,13 +127,17 @@ python optimizer_zoo_bias.py
 | `hyperspectral_completion.py` | Legacy smoke test | Indian Pines loader and exploratory CPU smoke test; configuration selection is test-informed and it is not a paper result |
 | `hyperspectral_wilson_v2.py` | Legacy protocol | Earlier fixed-learning-rate matched-loss protocol, retained for comparison |
 | `hyperspectral_wilson_v3.py` | Section 9, App D.6 | Canonical CPU Indian Pines reproduction: matched loss with train-only learning-rate selection |
-| `flowadam_upgrade.py` | Section 10 (legacy scalar) | FlowAdam-p under the legacy geometric-mean scalar; robustness comparison, not the reported numbers |
-| `flowadam_upgrade_rms.py` | Section 10 (canonical) | FlowAdam-p under the paper's RMS scalar; the source of the reported Section 10 numbers |
+| `flowadam_upgrade.py` | Section 10 | The two clip modes: per-coordinate (0.347) and global-norm (0.220), plus the legacy geometric-mean dial |
+| `flowadam_upgrade_rms.py` | Section 10 (canonical) | FlowAdam-p under the paper's RMS scalar; the source of the reported FlowAdam-p numbers (0.169) |
 | `flowadam_p_interp_control.py` | App D.8 | Interpolation control (not an early-stopping artifact) |
 
 For the paper's CPU real-data protocol, use `hyperspectral_wilson_v3.py`. The two legacy scripts
 remain for loader coverage and protocol comparison; they are not the source of the paper's reported
 real-data numbers.
+
+Section 10 draws on both FlowAdam scripts: `flowadam_upgrade.py` produces the two clip-mode rows
+(per-coordinate 0.347, global-norm 0.220) and `flowadam_upgrade_rms.py` the FlowAdam-p endpoint
+(0.169) under the RMS scalar the paper adopts.
 
 ### The H100 replication ladder (Appendix D.9)
 
@@ -160,16 +166,34 @@ Run additional ladder sizes with separate files, for example
 
 ```bash
 cd figures
-python make_figures.py
+python make_figures.py            # Figures 1, 2, 3, 4
+python make_realdata_trajectory.py   # Figure 5 (reads experiments/nibi_results/indianpines_gpu.jsonl)
 ```
 
-The script writes vector PDFs directly to `figures/`. These are the exact figures the manuscript
-includes. Its attention-gauge curves are a checked
+The scripts write vector PDFs directly to `figures/`. These are the exact figures the manuscript
+includes. `make_figures.py` covers the zoo map, attention gauge, phase diagram and dial;
+the real-data trajectory has its own script because it reads the committed GPU records rather than
+a local run. Figure 1 is not transcribed either: it reads `logs/optimizer_zoo_bias.jsonl`,
+recomputes the learning-rate selection from the per-(method, lr, seed) records, and asserts that it
+lands on the same rates and the same nine recovery values the run archived -- so Figure 1 and
+Table 2 cannot drift apart from the raw output without the script failing. Figure 5 likewise
+re-derives Appendix D.6's train-only rule from the GPU records and asserts every number Section 9
+and Table 5 print, using only seeds 42 and 123 to select the rate (456 and 789 are held out) and
+the sample s.d.\ the table quotes for the band. `make_figures.py`'s attention-gauge curves are a checked
 snapshot of the current CPU runs recorded in `logs/attention_gauge_cpu.txt` and
 `logs/attention_gauge_noise_cpu.txt`; regenerate the logs and figure together whenever the attention
 implementation changes.
 
-## Raw cluster records
+## Raw records
+
+`logs/` holds the checked-in output of the CPU runs behind Section 5. `optimizer_zoo_bias.jsonl`
+carries one record per (method, lr, seed) over every grid the zoo sweeps, then one `selected`
+record per method, and `optimizer_zoo_bias.txt` is the same run's stdout; between them, every cell
+of Table 2 and every bar of Figure 1 can be checked against raw output, including the selection
+that produced them. `nuclear_norm_reference.txt` is Table 2's convex reference row,
+`zoo_lr_sensitivity.txt`, `zoo_decay_control.txt`, `zoo_init_scale.txt` and `zoo_size_check.txt`
+the controls in Appendix D that the row rests on. These runs need no GPU: each is a few minutes on
+a laptop, and the logs are committed so a reader need not spend them.
 
 `experiments/nibi_results/` holds the raw JSONL records from the H100 runs behind Table 5
 (hyperspectral GPU replication and Pavia), Table 9 (twin drift at scale) and Table 11 (the
@@ -180,6 +204,15 @@ so `python collect.py --dir ../nibi_results` regenerates `SUMMARY.md` from them 
 Each `zoo_n*.jsonl` carries one `select` record naming the learning rate chosen for each method, plus
 one record per (method, lr, seed). Table 11's cells are the mean `rec` over the seeds at each method's
 selected rate.
+
+`dial_n40_flowlong.jsonl` is an audit of the one cell in `dial_n40.jsonl` that never interpolated:
+FlowAdam-p at p=0 and lr=1e-3, where all ten seeds hit the sweep's 30k-step cap still above the
+1e-7 bar. `experiments/nibi/dial_flowlong.py` reruns exactly those seeds at the same rate with the
+budget raised to 300k; every one crosses the bar between 38k and 59k steps and the mean recovery
+comes back 0.1475 +- 0.0357, against 0.1476 early-stopped. Section 10's 0.148 is therefore an
+interpolating reading, not an early-stopped one. Selection code applies the bar to the budget it
+was given, so a re-collection over `dial_n40.jsonl` alone will still pass that rate over; the
+extended file is what settles the cell.
 
 
 ## Data

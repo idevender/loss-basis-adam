@@ -18,6 +18,9 @@ sys.path.insert(0, HERE)
 import optimizer_zoo_bias as zoo
 
 SEEDS = zoo.SEEDS
+# The interpolation bar the paper quotes. Held separately from zoo.TRAIN_TOL because the
+# decay-full arm sets that global to -1 to disable early stopping; the bar itself never moves.
+INTERP_BAR = zoo.TRAIN_TOL
 GRIDS = {
     'gd':         [0.01, 0.03, 0.1, 0.3],
     'adam':       [1e-3, 1e-2, 3e-2],
@@ -55,7 +58,7 @@ def sweep(kind, mode, max_steps=20000):
         agg['ok'] = np.isfinite(agg['rec']) and np.isfinite(agg['train'])
         rows.append(agg)
     good = [r for r in rows if r['ok']]
-    interp = [r for r in good if r['train'] < 1e-4]
+    interp = [r for r in good if r['train'] < INTERP_BAR]
     pool = interp if interp else good
     rec_sel = min(pool, key=lambda r: r['rec']) if pool else None
     spd_sel = (min(interp, key=lambda r: r['steps']) if interp
@@ -106,8 +109,9 @@ def main():
         print(f"\n{kind:>11} [{mode:>10}] (equivariant: {eq})", flush=True)
         print(f"     rec-sel: {fmt(rec_sel)}", flush=True)
         print(f"     spd-sel: {fmt(spd_sel)}", flush=True)
-        if rec_sel is not None and rec_sel['train'] >= 1e-4:
-            print("     NOTE: best row did NOT interpolate (train >= 1e-4) - floor, not bias.", flush=True)
+        if rec_sel is not None and rec_sel['train'] >= INTERP_BAR:
+            print(f"     NOTE: best row did NOT interpolate (train >= {INTERP_BAR:g}) - floor, not bias.",
+                  flush=True)
     print(f"\n{'rmsprop':>11} [ const-60k ] extended budget (was train 2.9e-4 at 20k):", flush=True)
     rec_sel, spd_sel, _ = sweep('rmsprop', 'const', max_steps=60000)
     results[('rmsprop', 'const-60k')] = (rec_sel, spd_sel)

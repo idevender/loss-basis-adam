@@ -27,6 +27,8 @@ RESULTS = os.path.join(HERE, "..", "experiments", "nibi_results", "indianpines_g
 LEVELS = ["0.003", "0.001", "0.0003", "0.0001", "3e-05", "1e-05"]
 DENS = 0.15                      # the m/dof_24 ~ 1.15 cell narrated in Section 9
 METHODS = ["gd", "adam", "muon"]  # exactly the three the text discusses
+SEL_SEEDS = [42, 123]            # Appendix C.5: the lr is chosen on these two seeds only
+EVAL_SEEDS = [42, 123, 456, 789]  # all four are plotted, none of them selects the lr
 
 
 def load():
@@ -42,10 +44,11 @@ def load():
 
 def select_lr(rows, opt):
     """Appendix C.5's train-only rule: deepest matched train level reached by every seed,
-    ties broken by fewest steps.  No held-out quantity enters."""
+    ties broken by fewest steps.  No held-out quantity enters, and only the two selection
+    seeds do -- seeds 456 and 789 are fresh at the selected rate, so they must not vote on it."""
     by_lr = {}
     for r in rows:
-        if r["opt"] != opt:
+        if r["opt"] != opt or r["seed"] not in SEL_SEEDS:
             continue
         by_lr.setdefault(r["lr"], []).append(r)
     best, best_key = None, None
@@ -65,8 +68,11 @@ def select_lr(rows, opt):
 
 
 def curve(rows, opt, lr, idx):
-    """Per-level mean and s.d. over seeds of (held-out RMSE, effective rank)."""
-    rs = [r for r in rows if r["opt"] == opt and r["lr"] == lr]
+    """Per-level mean and s.d. over seeds of (held-out RMSE, effective rank).
+
+    The s.d. is the sample one (ddof=1), the convention Table 5 prints; ddof=0 would draw a band
+    a factor sqrt(3)/2 narrower than the +-0.013 / +-0.047 / +-0.082 the table quotes."""
+    rs = [r for r in rows if r["opt"] == opt and r["lr"] == lr and r["seed"] in EVAL_SEEDS]
     rmse_m, rmse_s, rank_m, n = [], [], [], []
     for lev in LEVELS:
         vals = [r["hits"][lev] for r in rs if lev in r["hits"]]
@@ -74,7 +80,7 @@ def curve(rows, opt, lr, idx):
             rmse_m.append(np.nan); rmse_s.append(np.nan); rank_m.append(np.nan); n.append(0)
             continue
         rmse_m.append(float(np.mean([v[0] for v in vals])))
-        rmse_s.append(float(np.std([v[0] for v in vals])))
+        rmse_s.append(float(np.std([v[0] for v in vals], ddof=1)) if len(vals) > 1 else 0.0)
         rank_m.append(float(np.mean([v[1] for v in vals])))
         n.append(len(vals))
     return np.array(rmse_m), np.array(rmse_s), np.array(rank_m), n
@@ -90,6 +96,11 @@ def main():
 
     # ---- guard 1: the train-only rule must reproduce the rates recorded in SUMMARY.md ----
     assert lrs == {"gd": 30.0, "adam": 0.01, "muon": 0.1}, f"selection changed: {lrs}"
+    for m in METHODS:  # the two selection seeds must be present, and the plot must add the other two
+        sel = {r["seed"] for r in rows if r["opt"] == m and r["seed"] in SEL_SEEDS}
+        assert sel == set(SEL_SEEDS), f"{m}: selection seeds {sorted(sel)}"
+        ev = {r["seed"] for r in rows if r["opt"] == m and r["lr"] == lrs[m]}
+        assert ev == set(EVAL_SEEDS), f"{m}: evaluation seeds {sorted(ev)}"
 
     data = {m: curve(rows, m, lrs[m], i) for i, m in enumerate(METHODS)}
     for m in METHODS:
@@ -105,6 +116,9 @@ def main():
     assert close(adam[L["1e-05"]], 0.02600, 5e-6), adam[L["1e-05"]]
     assert close(muon[L["1e-05"]], 0.03397, 5e-6), muon[L["1e-05"]]
     assert close(round(muonr[L["1e-05"]]), 36, 0), muonr[L["1e-05"]]
+    # ...and the band drawn around them is the same dispersion the table prints (x 10^-2)
+    for m, sd_tab in (("gd", 0.013), ("adam", 0.047), ("muon", 0.082)):
+        assert close(data[m][1][L["1e-05"]] * 100, sd_tab, 5e-4), (m, data[m][1][L["1e-05"]])
     red = (adam[L["1e-05"]] - gd[L["1e-05"]]) / adam[L["1e-05"]] * 100
     assert close(red, 43.0, 0.06), red
     # Section 9 narrative, matched train loss <= 3e-5
@@ -130,7 +144,7 @@ def main():
              "adam": ("Adam", C["adam"], "-", "s"),
              "muon": ("Muon", C["muon"], "-", "^")}
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.9, 2.95))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.2, 2.45))
 
     for m in METHODS:
         lab, col, ls, mk = style[m]
@@ -139,7 +153,7 @@ def main():
         ax1.plot(x, mu, ls, color=col, marker=mk, ms=3.6, lw=1.6, label=lab)
     ax1.set_ylabel("held-out RMSE")
     ax1.set_xlabel("matched train loss (fitting deeper $\\rightarrow$)")
-    ax1.legend(frameon=False, fontsize=9, loc="lower left")   # the only empty quadrant here
+    ax1.legend(frameon=False, fontsize=8.5, loc="lower left")   # the only empty quadrant here
     ax1.annotate("Adam's error rises\nas it fits deeper",
                  xy=(3, adam[3]), xytext=(1.35, 0.0385),
                  fontsize=8.5, color=C["adam"], ha="left",

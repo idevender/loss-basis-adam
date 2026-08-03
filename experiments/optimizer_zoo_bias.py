@@ -10,9 +10,13 @@ destroy it.
 
 Testbed: wd=0 sensing ladder (40x40, rank 3, k=40, m = 2 x dof), small init, run to interpolation,
 3 seeds. Reports recovery error, effective rank, and the balancedness invariant ||U^T U - V^T V||_F.
+
+Every (method, lr, seed) run is written to logs/optimizer_zoo_bias.jsonl, and the selected rows to
+the trailing "selected" record. That file, not a literal in the plotting script, is what
+figures/make_figures.py:fig_zoo reads, so Table 2 and Figure 1 are checkable against raw output.
 """
 from __future__ import annotations
-import math, os, sys, time
+import json, math, os, sys, time
 import numpy as np
 import torch
 
@@ -24,6 +28,7 @@ MAX_STEPS = 20000
 TRAIN_TOL = 1e-7
 EPS = 1e-8
 SEEDS = [42, 123, 456]
+JSONL = os.path.join(HERE, '..', 'logs', 'optimizer_zoo_bias.jsonl')
 
 
 def loss_of(U, V, A, y):
@@ -142,23 +147,54 @@ def run(kind, seed, lr):
     return dict(rec=rec, nuc=nuc, er=er, train=train, bal=balancedness(U, V), steps=step)
 
 
-def best(kind, lrs):
-    """Pick lr that interpolates (train<1e-4) with lowest recovery; fall back to lowest train."""
+def best(kind, lrs, sink=None):
+    """Pick the lr that interpolates with the lowest recovery; fall back to the lowest train loss.
+
+    "Interpolates" is TRAIN_TOL, the same 1e-7 bar the run loop stops on and the paper's Section 5
+    quotes -- not a looser gate. The bar is applied to the worst of the three seeds, so a rate that
+    interpolates on average but stalls on one seed cannot win.
+    """
     best_row = None
     for lr in lrs:
         per = [run(kind, s, lr) for s in SEEDS]
+        if sink is not None:
+            for s, p in zip(SEEDS, per):
+                sink.append(dict(opt=kind, lr=lr, seed=s, **p))
         rec = np.mean([p['rec'] for p in per]); tr = np.mean([p['train'] for p in per])
         er = np.mean([p['er'] for p in per]); nuc = np.mean([p['nuc'] for p in per])
-        bal = np.mean([p['bal'] for p in per])
+        bal = np.mean([p['bal'] for p in per]); trw = max(p['train'] for p in per)
         if not (np.isfinite(rec) and np.isfinite(tr)):
             continue
-        score = rec if tr < 1e-4 else rec + 10 + tr
+        score = rec if trw < TRAIN_TOL else rec + 10 + tr
         if best_row is None or score < best_row['score']:
-            best_row = dict(score=score, rec=rec, tr=tr, er=er, nuc=nuc, bal=bal, lr=lr)
+            best_row = dict(score=score, rec=rec, tr=tr, trw=trw, er=er, nuc=nuc, bal=bal, lr=lr)
     if best_row is None:
-        best_row = dict(score=float('nan'), rec=float('nan'), tr=float('nan'),
+        best_row = dict(score=float('nan'), rec=float('nan'), tr=float('nan'), trw=float('nan'),
                         er=float('nan'), nuc=float('nan'), bal=float('nan'), lr=float('nan'))
     return best_row
+
+
+def write_jsonl(sink, res, configs):
+    """Archive the grid: one record per (method, lr, seed), then the selected row per method.
+
+    The selected records carry the same means Table 2 prints, so a reader can recompute the
+    selection from the grid records and check it lands on the same rows.
+    """
+    os.makedirs(os.path.dirname(JSONL), exist_ok=True)
+    with open(JSONL, 'w') as fh:
+        fh.write(json.dumps(dict(kind='meta', exp='optimizer_zoo_bias', n=N, rank=R_STAR, k=K,
+                                 m=M, mdof=M / DOF, init=INIT, wd=0, seeds=SEEDS,
+                                 max_steps=MAX_STEPS, train_tol=TRAIN_TOL, decayed=sorted(DECAYED),
+                                 torch=torch.__version__, grids={k: g for k, _, g, _ in configs},
+                                 ts=time.strftime('%Y-%m-%d %H:%M:%S'))) + '\n')
+        for r in sink:
+            fh.write(json.dumps(dict(kind='grid', **r)) + '\n')
+        for kind, eq, _, _ in configs:
+            r = res[kind]
+            fh.write(json.dumps(dict(kind='selected', opt=kind, equivariant=(eq == 'YES'),
+                                     **{k: v for k, v in r.items() if k != 'score'})) + '\n')
+    print(f"[wrote {len(sink)} grid rows + {len(configs)} selected rows to "
+          f"{os.path.relpath(JSONL, os.path.dirname(HERE))}]", flush=True)
 
 
 def main():
@@ -183,13 +219,14 @@ def main():
         ('muon',       'YES',  [3e-3, 1e-2, 3e-2, 0.1],          'preserve (msign equivariant) + NOW interpolates'),
         ('shampoo',    'YES',  [3e-2, 0.1, 0.3, 1.0],            'preserve (L,R transform covariantly)'),
     ]
-    res = {}
+    res, sink = {}, []
     for kind, eq, lrs, note in configs:
-        r = best(kind, lrs)
+        r = best(kind, lrs, sink=sink)
         res[kind] = r
         print(f"{kind:>12} | {eq:>12} | {r['rec']:>9.4f} | {r['tr']:>9.1e} | {r['er']:>8.2f} | "
               f"{r['bal']:>9.2e} | {r['lr']:>6g} | {note}", flush=True)
     print("-" * 110, flush=True)
+    write_jsonl(sink, res, configs)
 
     # -- Primary classification: RECOVERY. This is the claim the paper makes (Section 5, Table 2).
     # Recovery, not effective rank, is the metric: a method can be low-rank *and wrong*. The two

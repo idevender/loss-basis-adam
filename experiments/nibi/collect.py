@@ -5,7 +5,8 @@ Usage:
     python collect.py --dir ../nibi_results --md ../nibi_results/SUMMARY.md
 
 Applies the paper's selection rules: for the zoo and phase sweeps, the best lr is the interpolating
-one (mean train < 1e-4 over selection seeds) with lowest mean recovery, with the cosine-all control
+one (mean train < 1e-7, the interpolation bar, over the selection seeds) with lowest mean
+recovery, with the cosine-all control
 reported alongside and the equivariant vs coordinate-wise split checked; for the dial, best lr per
 (n, p) with a monotonicity check along p; for attention, gauge and noise drift ranges per
 configuration with the conservative structural ratio; for Pavia and Indian Pines, the train-only lr

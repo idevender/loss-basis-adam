@@ -194,7 +194,7 @@ def best_pair(method, cfgs, p=None, scalar="geomean"):
         gauge_train = np.mean([r["gauge_train"] for r in rows])
         base_rec = np.mean([r["base_rec"] for r in rows])
         gauge_rec = np.mean([r["gauge_rec"] for r in rows])
-        interp = base_train < 1e-4 and gauge_train < 1e-4
+        interp = base_train < TRAIN_TOL and gauge_train < TRAIN_TOL
         score = 0.5 * (base_rec + gauge_rec) if interp else 10.0 + 0.5 * (base_rec + gauge_rec)
         if best is None or score < best[0]:
             cfg_text = f"lr={lr:g}" if damp is None else f"lr={lr:g} damp={damp:g}"

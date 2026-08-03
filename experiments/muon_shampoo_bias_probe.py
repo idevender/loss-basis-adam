@@ -96,7 +96,7 @@ def run(kind, seed, lr, beta=0.9):
 
 
 def best(kind, lrs, seeds):
-    """Pick lr that interpolates (train<1e-4) with lowest recovery; report eff_rank there."""
+    """Pick lr that interpolates (train < TRAIN_TOL) with lowest recovery; eff_rank there."""
     best_row = None
     for lr in lrs:
         per = [run(kind, s, lr) for s in seeds]
@@ -104,7 +104,7 @@ def best(kind, lrs, seeds):
         er = np.mean([p['er'] for p in per]); nuc = np.mean([p['nuc'] for p in per])
         if not (np.isfinite(rec) and np.isfinite(tr)):
             continue
-        score = rec if tr < 1e-4 else rec + 10
+        score = rec if tr < TRAIN_TOL else rec + 10
         if best_row is None or score < best_row['score']:
             best_row = dict(score=score, rec=rec, tr=tr, er=er, nuc=nuc, lr=lr)
     if best_row is None:

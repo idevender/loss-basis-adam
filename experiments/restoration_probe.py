@@ -107,7 +107,7 @@ def best(kind, lrs, wds=(0.0,)):
             rec = np.mean([p['rec'] for p in per])
             tr = np.mean([p['train'] for p in per])
             rows[(lr, wd)] = (rec, tr, per)
-            interp = tr < 1e-4
+            interp = tr < TRAIN_TOL
             score = rec if interp else rec + 10
             if best_row is None or score < best_row[0]:
                 best_row, best_cfg = (score, rec, tr, per), (lr, wd)

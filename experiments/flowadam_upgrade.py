@@ -72,7 +72,7 @@ def best(kind, lrs, wds=(0.0,), p_pow=1.0, clip_mode='globalnorm', c=10.0):
             if any(x['diverged'] for x in per):
                 continue
             rec = np.mean([x['rec'] for x in per]); tr = np.mean([x['train'] for x in per])
-            score = rec if tr < 1e-4 else rec + 10
+            score = rec if tr < TRAIN_TOL else rec + 10
             if best_row is None or score < best_row[0]:
                 best_row, best_cfg = (score, rec, tr, per), (lr, wd)
     if best_row is None:

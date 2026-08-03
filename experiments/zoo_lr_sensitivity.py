@@ -42,7 +42,7 @@ def main():
             rec = np.mean([p['rec'] for p in per]); tr = np.mean([p['train'] for p in per])
             er = np.mean([p['er'] for p in per]); st = np.mean([p['steps'] for p in per])
             flag = ''
-            if np.isfinite(tr) and tr < 1e-4 and min_interp is None:
+            if np.isfinite(tr) and tr < zoo.TRAIN_TOL and min_interp is None:
                 min_interp = (lr, rec, er)
                 flag = '   <- SMALLEST INTERPOLATING LR (flow-limit row)'
             print(f"   lr {lr:<7g}: rec {rec:>7.4f}  er {er:>6.2f}  train {tr:>9.1e}  "

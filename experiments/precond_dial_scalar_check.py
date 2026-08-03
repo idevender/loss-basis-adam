@@ -83,7 +83,7 @@ def best(p, scalar, lrs):
             continue
         rec = np.mean([x['rec'] for x in per])
         tr = np.mean([x['train'] for x in per])
-        score = rec if tr < 1e-4 else rec + 10
+        score = rec if tr < TRAIN_TOL else rec + 10
         if best_row is None or score < best_row[0]:
             best_row, best_cfg = (score, rec, tr, per), lr
     return best_row, best_cfg

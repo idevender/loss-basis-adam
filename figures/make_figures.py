@@ -3,7 +3,9 @@
 Renders the attention-gauge, dial, phase-diagram, and zoo-map figures as vector PDFs, using a
 colorblind-safe palette with one fixed hue per entity and serif typography matched to the paper body.
 The plotted numbers are the final experiment outputs; the dial uses the RMS
-(exactly-equivariant-at-p=0) convention.
+(exactly-equivariant-at-p=0) convention. The zoo map reads logs/optimizer_zoo_bias.jsonl and
+recomputes Table 2's learning-rate selection from it; the remaining three carry their run's
+numbers inline, each labelled with the archived file it was transcribed from.
 
 Writes vector PDFs into this directory. These are the exact figures the manuscript includes; copy
 them into the paper tree when they change.
@@ -28,7 +30,9 @@ EQ_FILL, CW_FILL = "#0072B2", "#D55E00"        # cluster identities
 INK, MUTE, FAINT = "#1A1A1A", "#5A5A5A", "#9A9A9A"
 
 plt.rcParams.update({
-    "font.size": 11,
+    # Sized against the 10pt paper body: axis labels sit just under it, ticks and annotations
+    # below that. The figures print at ~1:1, so these are the sizes that land on the page.
+    "font.size": 9.5,
     "font.family": "serif",
     "font.serif": ["Times New Roman", "Nimbus Roman No9 L", "DejaVu Serif"],
     "mathtext.fontset": "stix",
@@ -37,7 +41,7 @@ plt.rcParams.update({
     "axes.grid": True, "grid.color": "#E8E8E8", "grid.linewidth": 0.6,
     "axes.axisbelow": True, "axes.labelcolor": INK, "text.color": INK,
     "xtick.color": "#3C3C3C", "ytick.color": "#3C3C3C",
-    "xtick.labelsize": 9.5, "ytick.labelsize": 9.5,
+    "xtick.labelsize": 8.5, "ytick.labelsize": 8.5,
     "figure.dpi": 150, "savefig.dpi": 300, "savefig.bbox": "tight",
     "savefig.pad_inches": 0.03,
     "pdf.fonttype": 42,   # TrueType, not the Type 3 default: keeps figure text selectable
@@ -52,33 +56,79 @@ def _save(fig, name):
 
 
 # ---------------------------------------------------------------- fig 1: zoo map
+ZOO_JSONL = os.path.join(OUT, "..", "logs", "optimizer_zoo_bias.jsonl")
+ZOO_LABELS = {"muon": "Muon", "gd": "GD", "adam_p0rms": "scalar-Adam ($p{=}0$)",
+              "shampoo": "Shampoo", "lion": "Lion", "signum": "signum",
+              "rmsprop": "RMSProp", "adafactor": "Adafactor", "adam": "Adam"}
+
+
+def zoo_rows():
+    """Read the archived zoo grid and re-derive Table 2's selection from it.
+
+    The nine bars used to be literals here. They now come from the run's own output, and the
+    selection is recomputed from the per-(method, lr, seed) records rather than trusted, so a
+    figure can only disagree with the table by disagreeing with the raw data first.
+    """
+    import json
+    grid, selected = [], {}
+    with open(ZOO_JSONL) as fh:
+        for line in fh:
+            r = json.loads(line)
+            if r["kind"] == "meta":
+                tol = r["train_tol"]
+            elif r["kind"] == "grid":
+                grid.append(r)
+            elif r["kind"] == "selected":
+                selected[r["opt"]] = r
+
+    for opt, sel in selected.items():
+        by_lr = {}
+        for r in grid:
+            if r["opt"] == opt:
+                by_lr.setdefault(r["lr"], []).append(r)
+        best = None
+        for lr, rs in by_lr.items():
+            rec = float(np.mean([r["rec"] for r in rs]))
+            tr = float(np.mean([r["train"] for r in rs]))
+            if not (np.isfinite(rec) and np.isfinite(tr)):
+                continue
+            score = rec if max(r["train"] for r in rs) < tol else rec + 10 + tr
+            if best is None or score < best[0]:
+                best = (score, lr, rec)
+        assert best is not None and best[1] == sel["lr"], (opt, best, sel["lr"])
+        assert abs(best[2] - sel["rec"]) < 1e-12, (opt, best[2], sel["rec"])
+        assert sel["trw"] < tol, (opt, sel["trw"])   # every plotted row interpolates
+
+    rows = sorted(((ZOO_LABELS[o], s["rec"], s["equivariant"]) for o, s in selected.items()),
+                  key=lambda t: t[1])
+    assert len(rows) == 9, rows
+    return rows
+
+
 def fig_zoo():
-    rows = [  # (label, recovery, equivariant?)
-        ("Muon",              0.0000, True),
-        ("GD",                0.1312, True),
-        ("scalar-Adam ($p{=}0$)", 0.2010, True),
-        ("Shampoo",           0.2856, True),
-        ("Lion",              0.4248, False),
-        ("signum",            0.4454, False),
-        ("RMSProp",           0.5266, False),
-        ("Adafactor",         0.5430, False),
-        ("Adam",              0.5734, False),
-    ]
-    fig, ax = plt.subplots(figsize=(6.0, 3.2))
+    rows = zoo_rows()
+    eq_max = max(r for _, r, e in rows if e)
+    cw_min = min(r for _, r, e in rows if not e)
+    assert eq_max < cw_min, "the two clusters overlap; the empty-gap band is not drawn"
+    fig, ax = plt.subplots(figsize=(5.75, 2.36))
     y = np.arange(len(rows))[::-1]
     for yi, (lab, rec, eq) in zip(y, rows):
         col = EQ_FILL if eq else CW_FILL
         ax.barh(yi, rec, height=0.66, color=col, alpha=0.92,
                 edgecolor="white", linewidth=0.6, zorder=3)
-        ax.text(rec + 0.010, yi, "0.00005" if rec == 0 else f"{rec:.3f}",
+        # Muon's bar rounds to 0.000 at three decimals, so label it with the value it actually has
+        m, e = f"{rec:.1e}".split("e")
+        lab_x = rf"${m}{{\times}}10^{{{int(e)}}}$" if rec < 5e-4 else f"{rec:.3f}"
+        ax.text(rec + 0.010, yi, lab_x,
                 va="center", ha="left", fontsize=8.6, color=MUTE, zorder=4)
 
-    # empty gap between the two clusters
-    ax.axvspan(0.286, 0.425, color="#F1F1F1", zorder=0)
-    ax.plot([0.3555, 0.3555], [-0.6, 8.6], color=FAINT, lw=0.8, ls=(0, (2, 2)), zorder=1)
+    # empty gap between the two clusters, read off the data rather than fixed
+    mid = 0.5 * (eq_max + cw_min)
+    ax.axvspan(eq_max, cw_min, color="#F1F1F1", zorder=0)
+    ax.plot([mid, mid], [-0.6, 8.6], color=FAINT, lw=0.8, ls=(0, (2, 2)), zorder=1)
     # Placed high in the band: the only bar-value label that falls inside the gap is Shampoo's
     # (0.286, at y=5), so anchor clear of it rather than at the band's vertical midpoint.
-    ax.text(0.3555, 6.5, "empty gap\n(this budget)", ha="center", va="center", fontsize=8.4,
+    ax.text(mid, 6.5, "empty gap\n(this budget)", ha="center", va="center", fontsize=8.4,
             color=MUTE, style="italic", linespacing=1.25,
             bbox=dict(boxstyle="round,pad=0.18", fc="white", ec="none", alpha=0.9))
 
@@ -87,7 +137,7 @@ def fig_zoo():
     pos_eq = {int(yi): eq for yi, (_, _, eq) in zip(y, rows)}   # robust to tick ordering
     for tl in ax.get_yticklabels():
         tl.set_color(EQ_FILL if pos_eq[int(round(tl.get_position()[1]))] else CW_FILL)
-        tl.set_fontsize(9.5)
+        tl.set_fontsize(9.0)   # method names carry the figure's argument: kept above tick size
     ax.set_xlabel(r"ground-truth recovery error $\|W-X^\ast\|_F/\|X^\ast\|_F$"
                   "\n(lower = better recovery of the planted matrix)")
     ax.set_xlim(0, 0.72)
@@ -122,7 +172,7 @@ def fig_attention():
         ("scalar-Adam, gauge twin",   C["scalar"], "-",  "D",
             [1.8e-7, 1.6e-7, 3.1e-7, 5.8e-6, 4.1e-6, 3.8e-6, 4.0e-6, 4.1e-6, 4.3e-6]),
     ]
-    fig, ax = plt.subplots(figsize=(6.6, 3.6))
+    fig, ax = plt.subplots(figsize=(6.4, 2.62))
     for lab, col, ls, mk, ys in curves:
         ax.plot(x, ys, ls, color=col, lw=1.8, label=lab,
                 marker=mk, ms=3.4, mew=0, alpha=0.95)
@@ -168,7 +218,9 @@ def fig_phase():
         shampoo=[0.083, 0.083, 0.096, 0.090, 0.039, 0.035],
     )
     names = dict(gd="GD", adam="Adam", muon="Muon", shampoo="Shampoo")
-    fig, ax = plt.subplots(figsize=(6.0, 3.6))
+    # Narrower than the other full-width panels on purpose: nothing (legend, second panel) eats
+    # this one's width, so running it to \linewidth flattens the tau*=0.2 crossover it exists to show.
+    fig, ax = plt.subplots(figsize=(4.15, 2.32))
     for k in ("adam", "shampoo", "gd", "muon"):
         r, s = np.array(rec[k]), np.array(std[k])
         ax.fill_between(taus, r - s, r + s, color=C[k], alpha=0.12, lw=0)
@@ -206,7 +258,7 @@ def fig_dial():
     p = np.array([1.0, 0.75, 0.5, 0.25, 0.0])
     er = np.array([14.5, 11.1, 8.2, 6.4, 5.4])     # RMS convention
     rc = [0.570, 0.459, 0.348, 0.260, 0.201]        # recovery (annotated at ends)
-    fig, ax = plt.subplots(figsize=(4.6, 3.5))
+    fig, ax = plt.subplots(figsize=(4.3, 2.8))
 
     _wbox = dict(boxstyle="round,pad=0.12", fc="white", ec="none", alpha=0.9)
     ax.axhline(4.51, color=C["gd"], lw=1.1, ls=(0, (5, 3)), zorder=1)
