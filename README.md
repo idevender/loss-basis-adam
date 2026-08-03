@@ -135,10 +135,6 @@ For the paper's CPU real-data protocol, use `hyperspectral_wilson_v3.py`. The tw
 remain for loader coverage and protocol comparison; they are not the source of the paper's reported
 real-data numbers.
 
-Section 10 draws on both FlowAdam scripts: `flowadam_upgrade.py` produces the two clip-mode rows
-(per-coordinate 0.347, global-norm 0.220) and `flowadam_upgrade_rms.py` the FlowAdam-p endpoint
-(0.169) under the RMS scalar the paper adopts.
-
 ### The H100 replication ladder (Appendix D.9)
 
 `experiments/nibi/` is a self-contained GPU suite (device- and dtype-agnostic ports of the CPU
@@ -171,29 +167,28 @@ python make_realdata_trajectory.py   # Figure 5 (reads experiments/nibi_results/
 ```
 
 The scripts write vector PDFs directly to `figures/`. These are the exact figures the manuscript
-includes. `make_figures.py` covers the zoo map, attention gauge, phase diagram and dial;
-the real-data trajectory has its own script because it reads the committed GPU records rather than
-a local run. Figure 1 is not transcribed either: it reads `logs/optimizer_zoo_bias.jsonl`,
-recomputes the learning-rate selection from the per-(method, lr, seed) records, and asserts that it
-lands on the same rates and the same nine recovery values the run archived -- so Figure 1 and
-Table 2 cannot drift apart from the raw output without the script failing. Figure 5 likewise
-re-derives Appendix D.6's train-only rule from the GPU records and asserts every number Section 9
-and Table 5 print, using only seeds 42 and 123 to select the rate (456 and 789 are held out) and
-the sample s.d.\ the table quotes for the band. `make_figures.py`'s attention-gauge curves are a checked
-snapshot of the current CPU runs recorded in `logs/attention_gauge_cpu.txt` and
-`logs/attention_gauge_noise_cpu.txt`; regenerate the logs and figure together whenever the attention
-implementation changes.
+includes. Figure 5 has its own script because it reads the committed GPU records rather than a
+local run.
+
+Figures 1 and 5 are not transcribed. Figure 1 recomputes Table 2's learning-rate selection from
+the per-(method, lr, seed) records in `logs/optimizer_zoo_bias.jsonl`; Figure 5 re-derives
+Appendix D.6's train-only rule from the GPU records, selecting on seeds 42 and 123 with 456 and
+789 held out. Both assert they land on the published numbers, so neither can drift from the raw
+output without failing.
+
+The attention-gauge curves are a checked snapshot of `logs/attention_gauge_cpu.txt` and
+`logs/attention_gauge_noise_cpu.txt`; regenerate the logs and the figure together whenever the
+attention implementation changes.
 
 ## Raw records
 
-`logs/` holds the checked-in output of the CPU runs behind Section 5. `optimizer_zoo_bias.jsonl`
-carries one record per (method, lr, seed) over every grid the zoo sweeps, then one `selected`
-record per method, and `optimizer_zoo_bias.txt` is the same run's stdout; between them, every cell
-of Table 2 and every bar of Figure 1 can be checked against raw output, including the selection
-that produced them. `nuclear_norm_reference.txt` is Table 2's convex reference row,
-`zoo_lr_sensitivity.txt`, `zoo_decay_control.txt`, `zoo_init_scale.txt` and `zoo_size_check.txt`
-the controls in Appendix D that the row rests on. These runs need no GPU: each is a few minutes on
-a laptop, and the logs are committed so a reader need not spend them.
+`logs/` holds the checked-in output of the CPU runs behind Section 5, each a few laptop-minutes to
+reproduce. `optimizer_zoo_bias.jsonl` carries one record per (method, lr, seed) over every grid the
+zoo sweeps plus one `selected` record per method, with the same run's stdout in
+`optimizer_zoo_bias.txt`; between them every cell of Table 2 and every bar of Figure 1 checks
+against raw output, selection included. `nuclear_norm_reference.txt` is Table 2's convex reference
+row, and `zoo_lr_sensitivity.txt`, `zoo_decay_control.txt`, `zoo_init_scale.txt` and
+`zoo_size_check.txt` the Appendix D controls it rests on.
 
 `experiments/nibi_results/` holds the raw JSONL records from the H100 runs behind Table 5
 (hyperspectral GPU replication and Pavia), Table 9 (twin drift at scale) and Table 11 (the
@@ -205,14 +200,13 @@ Each `zoo_n*.jsonl` carries one `select` record naming the learning rate chosen 
 one record per (method, lr, seed). Table 11's cells are the mean `rec` over the seeds at each method's
 selected rate.
 
-`dial_n40_flowlong.jsonl` is an audit of the one cell in `dial_n40.jsonl` that never interpolated:
-FlowAdam-p at p=0 and lr=1e-3, where all ten seeds hit the sweep's 30k-step cap still above the
-1e-7 bar. `experiments/nibi/dial_flowlong.py` reruns exactly those seeds at the same rate with the
-budget raised to 300k; every one crosses the bar between 38k and 59k steps and the mean recovery
-comes back 0.1475 +- 0.0357, against 0.1476 early-stopped. Section 10's 0.148 is therefore an
-interpolating reading, not an early-stopped one. Selection code applies the bar to the budget it
-was given, so a re-collection over `dial_n40.jsonl` alone will still pass that rate over; the
-extended file is what settles the cell.
+`dial_n40_flowlong.jsonl` audits the one cell in `dial_n40.jsonl` that never interpolated:
+FlowAdam-p at p=0, lr=1e-3, where all ten seeds hit the sweep's 30k-step cap above the 1e-7 bar.
+`experiments/nibi/dial_flowlong.py` reruns those seeds at the same rate with the budget raised to
+300k; every one crosses the bar between 38k and 59k steps, and mean recovery comes back
+0.1475 +- 0.0357 against 0.1476 early-stopped, so Section 10's 0.148 is an interpolating reading.
+Selection applies the bar to the budget it was given, so re-collecting over `dial_n40.jsonl` alone
+still passes that rate over; the extended file is what settles the cell.
 
 
 ## Data
