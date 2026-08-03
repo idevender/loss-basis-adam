@@ -110,15 +110,13 @@ python optimizer_zoo_bias.py
 | `restoration_probe.py` | (shared) | The matrix-sensing testbed used across the sensing experiments |
 | `attention_gauge.py` | Section 6 | Attention-gauge onset: Adam splits after one step, SGD and scalar-Adam stay at numerical scale; Muon's gauge and noise twins can both diverge under numerical chaos |
 | `attention_gauge_multiseed.py` | App D.5 | Attention gauge across seeds, gauge draws, and noise scales |
-| `hyperspectral_completion.py` | Legacy smoke test | Indian Pines loader and exploratory smoke test; not a paper result (selection is test-informed) |
-| `hyperspectral_wilson_v2.py` | Legacy protocol | Earlier fixed-learning-rate matched-loss protocol |
 | `hyperspectral_wilson_v3.py` | Section 9, App D.6 | Canonical CPU Indian Pines reproduction: matched loss, train-only lr selection |
 | `flowadam_upgrade.py` | Section 10 | The two clip modes: per-coordinate (0.347) and global-norm (0.220), plus the legacy geometric-mean dial |
 | `flowadam_upgrade_rms.py` | Section 10 (canonical) | FlowAdam-p under the RMS scalar; the source of the reported 0.169 |
 | `flowadam_p_interp_control.py` | App D.8 | Interpolation control (not an early-stopping artifact) |
 
-Use `hyperspectral_wilson_v3.py` for the CPU real-data protocol. The two legacy scripts are kept
-for loader coverage and protocol comparison only.
+Use `hyperspectral_wilson_v3.py` for the CPU real-data protocol. `hyperspectral_completion.py`
+and `hyperspectral_wilson_v2.py` are earlier variants kept for loader coverage, not paper results.
 
 ### The H100 replication ladder (Appendix D.9)
 
@@ -184,13 +182,9 @@ directory the ladder writes to, so `python collect.py --dir ../nibi_results` reg
 Each `zoo_n*.jsonl` has one `select` record naming the learning rate chosen per method, plus one
 record per (method, lr, seed). Table 11's cells are the mean `rec` over seeds at the selected rate.
 
-`dial_n40_flowlong.jsonl` audits the one cell in `dial_n40.jsonl` that never interpolated:
-FlowAdam-p at p=0, lr=1e-3, where all ten seeds hit the sweep's 30k-step cap above the 1e-7 bar.
-`experiments/nibi/dial_flowlong.py` reruns those seeds at the same rate with a 300k budget. Every
-one crosses the bar between 38k and 59k steps, and mean recovery comes back 0.1475 +- 0.0357
-against 0.1476 early-stopped, so Section 10's 0.148 is an interpolating reading. Selection applies
-the bar to whatever budget it was given, so re-collecting over `dial_n40.jsonl` alone still passes
-that rate over; the extended file is what settles the cell.
+`dial_n40_flowlong.jsonl` is the extended-budget rerun of the one dial cell that hit the step cap
+without interpolating, written by `experiments/nibi/dial_flowlong.py`; the paper's Section 10 and
+its appendix give the reading. Re-collecting over `dial_n40.jsonl` alone will not reproduce it.
 
 ## Data
 
