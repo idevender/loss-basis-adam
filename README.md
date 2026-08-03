@@ -45,9 +45,7 @@ pip install -r requirements.txt
 pytest -q tests/test_paper_identities.py      # 25 tests, 41 parametrized runs
 ```
 
-This is a numerical check at float tolerance on random instances, not a formal proof, and it says
-nothing about the empirical tables — but it rules out the algebra slips in stated identities that
-quietly sink theory papers. Test names carry the current manuscript's numbering (for example
+Test names carry the current manuscript's numbering (for example
 `test_thm46_transfer_theorem_time_change_direction` for the transfer theorem, Theorem 4.6).
 
 ## The optimizer
