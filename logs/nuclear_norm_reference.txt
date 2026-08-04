@@ -1,0 +1,3 @@
+seed 42: iters 20000  feas 7.32e-16  nuc 33.941232 (X* 33.941225)  rec 0.000000  erank 2.964  pr 2.0e-06
+seed 123: iters 20000  feas 6.62e-16  nuc 41.082744 (X* 41.082738)  rec 0.000000  erank 2.943  pr 1.8e-06
+seed 456: iters 657  feas 6.91e-16  nuc 38.415666 (X* 38.508539)  rec 0.100459  erank 3.991  pr 9.9e-12

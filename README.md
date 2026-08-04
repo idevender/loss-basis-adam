@@ -172,6 +172,8 @@ attention implementation changes.
 - `nuclear_norm_reference.txt` — Table 2's convex reference row.
 - `zoo_lr_sensitivity.txt`, `zoo_decay_control.txt`, `zoo_init_scale.txt`, `zoo_size_check.txt` —
   the Appendix D controls that row rests on.
+- `signum_c9_audit_cpu.txt` — the horizon × schedule grid, the rank-one falsification and the
+  spectral-tail sweep behind Appendix D.10, from `experiments/signum_c9_audit.py`.
 
 `experiments/nibi_results/` holds the H100 JSONL behind Table 5 (GPU hyperspectral and Pavia),
 Table 9 (twin drift at scale) and Table 11 (the problem-size ladder). These runs need a GPU
@@ -184,7 +186,8 @@ record per (method, lr, seed). Table 11's cells are the mean `rec` over seeds at
 
 `dial_n40_flowlong.jsonl` is the extended-budget rerun of the one dial cell that hit the step cap
 without interpolating, written by `experiments/nibi/dial_flowlong.py`; the paper's Section 10 and
-its appendix give the reading. Re-collecting over `dial_n40.jsonl` alone will not reproduce it.
+its appendix give the reading. Re-collecting over `dial_n40.jsonl` alone will not reproduce it; its
+stdout is `logs/dial_flowlong_n40.txt`.
 
 ## Data
 

@@ -1,0 +1,47 @@
+==============================================================================================================
+OPTIMIZER-ZOO GEOMETRY MAP | sensing 40x40 r*3 k40 m=462 (2.0x dof) init=0.001 wd=0 | 3 seeds | decayed lr for ['lion', 'muon', 'rmsprop', 'signum']
+Prediction: EQUIVARIANT (gd, adam_p0rms, muon, shampoo) preserve the low-rank bias;
+COORDINATE-WISE (adam, rmsprop, signum, lion, adafactor) destroy it. bal = |U^TU-V^TV|_F.
+==============================================================================================================
+      method | equivariant? |  recovery |     train | eff_rank |       bal |     lr | predicted
+--------------------------------------------------------------------------------------------------------------
+          gd |          YES |    0.1312 |   6.5e-08 |     4.51 |  5.85e-02 |   0.01 | preserve (anchor)
+        adam |           no |    0.5734 |   1.2e-11 |    14.37 |  5.37e+00 |   0.01 | destroy (anchor)
+  adam_p0rms |          YES |    0.2010 |   3.5e-08 |     5.43 |  1.39e-01 |  0.001 | preserve (scalar = time-rescaled flow)
+     rmsprop |           no |    0.5266 |   6.0e-08 |    12.80 |  4.74e+00 | 0.0001 | destroy (per-coord)
+      signum |           no |    0.4454 |   6.5e-08 |     7.83 |  1.79e+00 |  0.003 | coordinate-wise ($\ell_\infty$-like)
+        lion |           no |    0.4248 |   8.0e-08 |    10.58 |  7.35e+00 | 0.0003 | coordinate-wise ($\ell_\infty$-like)
+   adafactor |           no |    0.5430 |   5.6e-08 |    10.72 |  3.40e+00 | 0.0003 | destroy (factored diagonal)
+        muon |          YES |    0.0000 |   5.7e-08 |     2.95 |  1.65e+00 |    0.1 | preserve (msign equivariant) + NOW interpolates
+     shampoo |          YES |    0.2856 |   4.5e-08 |     6.95 |  1.47e+00 |   0.03 | preserve (L,R transform covariantly)
+--------------------------------------------------------------------------------------------------------------
+[wrote 108 grid rows + 9 selected rows to logs/optimizer_zoo_bias.jsonl]
+
+[PRIMARY] recovery clusters (the paper's claim):
+            gd: rec=0.1312  erank= 4.51  equivariant 
+          adam: rec=0.5734  erank=14.37  coord.-wise 
+    adam_p0rms: rec=0.2010  erank= 5.43  equivariant 
+       rmsprop: rec=0.5266  erank=12.80  coord.-wise 
+        signum: rec=0.4454  erank= 7.83  coord.-wise 
+          lion: rec=0.4248  erank=10.58  coord.-wise 
+     adafactor: rec=0.5430  erank=10.72  coord.-wise 
+          muon: rec=0.0000  erank= 2.95  equivariant 
+       shampoo: rec=0.2856  erank= 6.95  equivariant 
+
+  worst equivariant : shampoo 0.2856
+  best coord.-wise  : lion 0.4248
+  -> CLEAN SPLIT 9/9: every equivariant method recovers better than every coordinate-wise one (empty gap of 0.1392).
+
+[SECONDARY] if one classified on eff_rank alone (threshold 9.44 = midpoint of GD 4.51 / Adam 14.37):
+            gd: er= 4.51 rec=0.1312 -> preserve [match]
+          adam: er=14.37 rec=0.5734 -> destroy  [match]
+    adam_p0rms: er= 5.43 rec=0.2010 -> preserve [match]
+       rmsprop: er=12.80 rec=0.5266 -> destroy  [match]
+        signum: er= 7.83 rec=0.4454 -> preserve [MISLABELLED by rank]
+          lion: er=10.58 rec=0.4248 -> destroy  [match]
+     adafactor: er=10.72 rec=0.5430 -> destroy  [match]
+          muon: er= 2.95 rec=0.0000 -> preserve [match]
+       shampoo: er= 6.95 rec=0.2856 -> preserve [match]
+  -> 8/9 by rank. Any shortfall here is expected and is the reason recovery is primary: rank can lie.
+
+[done in 2.7 min]

@@ -1,0 +1,20 @@
+====================================================================================================
+ZOO INIT-SCALE ROBUSTNESS | sensing 40x40 r*3 m=462 wd=0 | 3 seeds | INIT sweep [0.001, 0.003, 0.01] (zoo used 1e-3)
+Read: split (gd/p0rms/muon/shampoo low rec vs adam high rec) must persist at every init.
+====================================================================================================
+    init |            gd          adam    adam_p0rms          muon       shampoo
+----------------------------------------------------------------------------------------------------
+   0.001 |        0.1312        0.5734        0.2010        0.0000        0.2856   <- recovery
+         |          4.51         14.37          5.43          2.95          6.95   <- eff_rank
+         |       6.5e-08       1.2e-11       3.5e-08       5.7e-08       4.5e-08   <- train
+         | split: max(equivariant rec)=0.2856 vs adam=0.5734 -> HOLDS
+   0.003 |        0.2032        0.5747        0.2603        0.0000        0.3524   <- recovery
+         |          5.52         14.56          6.38          2.95          8.15   <- eff_rank
+         |       3.9e-08       6.7e-09       4.5e-08       3.0e-08       5.5e-08   <- train
+         | split: max(equivariant rec)=0.3524 vs adam=0.5747 -> HOLDS
+    0.01 |        0.3182        0.5836        0.3584        0.0000        0.5754   <- recovery
+         |          7.57         14.91          8.35          2.95         14.19   <- eff_rank
+         |       2.5e-08       2.5e-09       1.0e-08       4.9e-08       4.4e-08   <- train
+         | split: max(equivariant rec)=0.5754 vs adam=0.5836 -> HOLDS
+
+[done in 2.9 min]

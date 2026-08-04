@@ -34,8 +34,8 @@ data
 results/
 runs/
 logs/*
-!logs/attention_gauge_cpu.txt
-!logs/attention_gauge_noise_cpu.txt
+!logs/*.txt
+!logs/*.jsonl
 wandb/
 
 # Tooling caches

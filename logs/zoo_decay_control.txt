@@ -1,0 +1,121 @@
+================================================================================================================
+ZOO DECAY CONTROL | sensing 40x40 r*3 m=462 init=0.001 wd=0 | 3 seeds | modes: const / decay(early-stop) / decay-full(no early stop)
+Reads: (1) Adam+decay still destroys? (2) GD+decay-full -> Muon-exact? (3) split survives both schedules x both selection rules?
+================================================================================================================
+
+         gd [     const] (equivariant: YES)
+     rec-sel: rec 0.1312  er  4.51  train 6.5e-08  bal 5.85e-02  steps   3000  lr 0.01
+     spd-sel: rec 0.4371  er  8.67  train 3.8e-08  bal 2.46e+00  steps   1200  lr 0.03
+
+       adam [     const] (equivariant: no)
+     rec-sel: rec 0.5734  er 14.37  train 1.2e-11  bal 5.37e+00  steps    400  lr 0.01
+     spd-sel: rec 0.5734  er 14.37  train 1.2e-11  bal 5.37e+00  steps    400  lr 0.01
+
+ adam_p0rms [     const] (equivariant: YES)
+     rec-sel: rec 0.2010  er  5.43  train 3.5e-08  bal 1.39e-01  steps   3200  lr 0.001
+     spd-sel: rec 0.3566  er  7.96  train 2.4e-09  bal 2.02e+00  steps    400  lr 0.01
+
+    rmsprop [     const] (equivariant: no)
+     rec-sel: rec 0.3179  er  5.55  train 2.2e-01  bal 3.75e+00  steps  20000  lr 0.01
+     spd-sel: rec 0.5270  er 12.81  train 2.9e-04  bal 4.71e+00  steps  20000  lr 0.0001
+     NOTE: best row did NOT interpolate (train >= 1e-07) - floor, not bias.
+
+     signum [     const] (equivariant: no)
+     rec-sel: rec 0.0089  er  3.07  train 5.0e-02  bal 2.10e+00  steps  20000  lr 0.003
+     spd-sel: rec 0.5454  er 13.50  train 2.6e-04  bal 4.50e+00  steps  20000  lr 0.0001
+     NOTE: best row did NOT interpolate (train >= 1e-07) - floor, not bias.
+
+       lion [     const] (equivariant: no)
+     rec-sel: rec 0.4242  er 10.58  train 2.0e-03  bal 7.39e+00  steps  20000  lr 0.0003
+     spd-sel: rec 0.5210  er 12.60  train 2.1e-04  bal 4.37e+00  steps  20000  lr 0.0001
+     NOTE: best row did NOT interpolate (train >= 1e-07) - floor, not bias.
+
+  adafactor [     const] (equivariant: no)
+     rec-sel: rec 0.5430  er 10.72  train 5.6e-08  bal 3.40e+00  steps   2600  lr 0.0003
+     spd-sel: rec 0.6075  er 12.94  train 3.3e-08  bal 2.99e+00  steps    400  lr 0.001
+
+       muon [     const] (equivariant: YES)
+     rec-sel: rec 0.0084  er  3.05  train 6.2e-02  bal 1.31e+00  steps  20000  lr 0.03
+     spd-sel: rec 0.8758  er 31.31  train 3.2e-03  bal 3.12e+00  steps  20000  lr 0.003
+     NOTE: best row did NOT interpolate (train >= 1e-07) - floor, not bias.
+
+    shampoo [     const] (equivariant: YES)
+     rec-sel: rec 0.2856  er  6.95  train 4.5e-08  bal 1.47e+00  steps   2533  lr 0.03
+     spd-sel: rec 0.2856  er  6.95  train 4.5e-08  bal 1.47e+00  steps   2533  lr 0.03
+
+         gd [     decay] (equivariant: YES)
+     rec-sel: rec 0.1312  er  4.51  train 8.0e-08  bal 5.85e-02  steps   3000  lr 0.01
+     spd-sel: rec 0.4366  er  8.66  train 2.2e-08  bal 2.46e+00  steps    933  lr 0.03
+
+       adam [     decay] (equivariant: no)
+     rec-sel: rec 0.5734  er 14.37  train 1.3e-11  bal 5.37e+00  steps    400  lr 0.01
+     spd-sel: rec 0.5734  er 14.37  train 1.3e-11  bal 5.37e+00  steps    400  lr 0.01
+
+ adam_p0rms [     decay] (equivariant: YES)
+     rec-sel: rec 0.2010  er  5.43  train 5.4e-08  bal 1.39e-01  steps   3200  lr 0.001
+     spd-sel: rec 0.3566  er  7.96  train 2.4e-09  bal 2.02e+00  steps    400  lr 0.01
+
+    rmsprop [     decay] (equivariant: no)
+     rec-sel: rec 0.5266  er 12.80  train 6.0e-08  bal 4.74e+00  steps  18133  lr 0.0001
+     spd-sel: rec 0.5266  er 12.80  train 6.0e-08  bal 4.74e+00  steps  18133  lr 0.0001
+
+     signum [     decay] (equivariant: no)
+     rec-sel: rec 0.4454  er  7.83  train 6.5e-08  bal 1.79e+00  steps  19600  lr 0.003
+     spd-sel: rec 0.5445  er 13.48  train 7.4e-08  bal 4.61e+00  steps  18000  lr 0.0001
+
+       lion [     decay] (equivariant: no)
+     rec-sel: rec 0.4248  er 10.58  train 8.0e-08  bal 7.35e+00  steps  19000  lr 0.0003
+     spd-sel: rec 0.5235  er 12.68  train 8.2e-08  bal 4.36e+00  steps  18200  lr 0.0001
+
+  adafactor [     decay] (equivariant: no)
+     rec-sel: rec 0.5430  er 10.72  train 4.1e-08  bal 3.40e+00  steps   2667  lr 0.0003
+     spd-sel: rec 0.6075  er 12.94  train 3.4e-08  bal 2.99e+00  steps    400  lr 0.001
+
+       muon [     decay] (equivariant: YES)
+     rec-sel: rec 0.0000  er  2.95  train 5.7e-08  bal 1.65e+00  steps  19800  lr 0.1
+     spd-sel: rec 0.9147  er 33.72  train 4.1e-08  bal 3.54e+00  steps  19000  lr 0.003
+
+    shampoo [     decay] (equivariant: YES)
+     rec-sel: rec 0.2856  er  6.95  train 5.4e-08  bal 1.47e+00  steps   2533  lr 0.03
+     spd-sel: rec 0.2856  er  6.95  train 5.4e-08  bal 1.47e+00  steps   2533  lr 0.03
+
+         gd [decay-full] (equivariant: YES)
+     rec-sel: rec 0.1312  er  4.51  train 3.0e-11  bal 5.85e-02  steps  20000  lr 0.01
+     spd-sel: rec 0.1312  er  4.51  train 3.0e-11  bal 5.85e-02  steps  20000  lr 0.01
+
+       adam [decay-full] (equivariant: no)
+     rec-sel: rec 0.5764  er 14.38  train 4.5e-12  bal 5.30e+00  steps  20000  lr 0.001
+     spd-sel: rec 0.5764  er 14.38  train 4.5e-12  bal 5.30e+00  steps  20000  lr 0.001
+
+ adam_p0rms [decay-full] (equivariant: YES)
+     rec-sel: rec 0.2010  er  5.43  train 5.8e-12  bal 1.39e-01  steps  20000  lr 0.001
+     spd-sel: rec 0.2010  er  5.43  train 5.8e-12  bal 1.39e-01  steps  20000  lr 0.001
+
+       muon [decay-full] (equivariant: YES)
+     rec-sel: rec 0.0000  er  2.95  train 2.0e-11  bal 1.15e+00  steps  20000  lr 0.03
+     spd-sel: rec 0.9147  er 33.72  train 5.2e-12  bal 3.54e+00  steps  20000  lr 0.003
+
+    shampoo [decay-full] (equivariant: YES)
+     rec-sel: rec 0.2856  er  6.95  train 1.0e-10  bal 1.47e+00  steps  20000  lr 0.03
+     spd-sel: rec 0.2856  er  6.95  train 1.0e-10  bal 1.47e+00  steps  20000  lr 0.03
+
+    rmsprop [ const-60k ] extended budget (was train 2.9e-4 at 20k):
+     rec-sel: rec 0.0185  er  3.16  train 3.1e-01  bal 4.47e+00  steps  60000  lr 0.01
+     spd-sel: rec 0.5277  er 12.83  train 2.8e-04  bal 4.61e+00  steps  60000  lr 0.0001
+
+================================================================================================================
+CLUSTER-SPLIT SCORES:
+    [const / rec-sel] split at rec 0.352: 7/9 - inspect mismatches
+    [const / spd-sel] split at rec 0.505: 8/9 - inspect mismatches
+    [decay / rec-sel] split at rec 0.352: 9/9 - class-consistent
+    [decay / spd-sel] split at rec 0.505: 8/9 - inspect mismatches
+
+SUMMARY DELTAS:
+               Adam const -> decay: rec 0.5734 -> 0.5734   er 14.37 -> 14.37
+          Adam const -> decay-full: rec 0.5734 -> 0.5764   er 14.37 -> 14.38
+               GD   const -> decay: rec 0.1312 -> 0.1312   er 4.51 -> 4.51
+          GD   const -> decay-full: rec 0.1312 -> 0.1312   er 4.51 -> 4.51
+     Muon(decay) vs GD(decay-full): rec 0.0000 -> 0.1312   er 2.95 -> 4.51
+        Muon const(floor) -> decay: rec 0.0084 -> 0.0000   er 3.05 -> 2.95
+
+[done in 9.0 min]

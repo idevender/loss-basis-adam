@@ -1,0 +1,37 @@
+====================================================================================================
+ZOO LR-SENSITIVITY | sensing 40x40 r*3 m=462 init=0.001 wd=0 | 3 seeds | full lr curves (muon decayed as in zoo)
+Read: does Adam destroy at EVERY lr? Do equivariant methods recover at their SMALLEST interpolating lr (flow limit)?
+====================================================================================================
+
+gd (const):
+   lr 0.003  : rec  0.1132  er   4.29  train   9.2e-08  steps   11200   <- SMALLEST INTERPOLATING LR (flow-limit row)
+   lr 0.01   : rec  0.1312  er   4.51  train   6.5e-08  steps    3000
+   lr 0.03   : rec  0.4371  er   8.67  train   3.8e-08  steps    1200
+   lr 0.1    : rec     nan  er    nan  train       nan  steps       8
+
+adam (const):
+   lr 0.0003 : rec  0.5598  er  13.81  train   3.4e-08  steps    3267   <- SMALLEST INTERPOLATING LR (flow-limit row)
+   lr 0.001  : rec  0.5764  er  14.38  train   5.0e-09  steps    1200
+   lr 0.003  : rec  0.5704  er  14.49  train   2.7e-08  steps     400
+   lr 0.01   : rec  0.5734  er  14.37  train   1.2e-11  steps     400
+   lr 0.03   : rec  0.5809  er  14.52  train   2.7e-11  steps     400
+
+adam_p0rms (const):
+   lr 0.0003 : rec  0.1647  er   4.94  train   6.0e-08  steps    6733   <- SMALLEST INTERPOLATING LR (flow-limit row)
+   lr 0.001  : rec  0.2010  er   5.43  train   3.5e-08  steps    3200
+   lr 0.003  : rec  0.2559  er   6.23  train   1.8e-08  steps    1267
+   lr 0.01   : rec  0.3566  er   7.96  train   2.4e-09  steps     400
+
+muon (decay):
+   lr 0.003  : rec  0.9147  er  33.72  train   4.1e-08  steps   19000   <- SMALLEST INTERPOLATING LR (flow-limit row)
+   lr 0.01   : rec  0.7484  er  18.60  train   8.0e-08  steps   19200
+   lr 0.03   : rec  0.0000  er   2.95  train   5.8e-08  steps   19600
+   lr 0.1    : rec  0.0000  er   2.95  train   5.7e-08  steps   19800
+
+shampoo (const):
+   lr 0.01   : rec  0.8812  er  32.44  train   1.7e-05  steps   20000
+   lr 0.03   : rec  0.2856  er   6.95  train   4.5e-08  steps    2533   <- SMALLEST INTERPOLATING LR (flow-limit row)
+   lr 0.1    : rec     nan  er    nan  train       nan  steps       8
+   lr 0.3    : rec     nan  er    nan  train       nan  steps       6
+
+[done in 1.5 min]

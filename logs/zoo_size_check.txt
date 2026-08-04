@@ -1,0 +1,9 @@
+================================================================================================
+ZOO SIZE CHECK | sensing 60x60 r*5 k60 m=1150 (2x dof) init=0.001 wd=0 | 3 seeds
+Does the zoo ordering (Muon ~exact < GD << Adam) survive a second size/rank?
+================================================================================================
+      gd | rec   0.0770 | train   8.6e-08 | er   6.50 | lr 0.01
+    adam | rec   0.4651 | train   3.3e-08 | er  19.72 | lr 0.001
+    muon | rec   0.0000 | train   8.1e-11 | er   4.84 | lr 0.3
+
+[done in 4.7 min]
