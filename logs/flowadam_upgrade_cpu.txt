@@ -1,0 +1,28 @@
+================================================================================================================
+FLOWADAM UPGRADE | sensing 40x40 r*3 k40 m=462 (2.0x dof) | 3 seeds | wd=0 | run to interp
+Q: does FLOW + softened preconditioner (FlowAdam-p) beat shipped FlowAdam AND Adam-p, at FEWER steps?
+================================================================================================================
+                        method |  recovery |     train | eff_rank |  steps | cfg
+----------------------------------------------------------------------------------------------------------------
+           Adam (p=1, no flow) |    0.5705 |  2.36e-08 |    14.49 |    400 | cfg=(0.003, 0.0) perseed=[0.515 0.583 0.613]
+  Adam-p=0 (softened, no flow) |    0.2292 |  5.89e-08 |     5.83 |   2100 | cfg=(0.001, 0.0) perseed=[0.2   0.216 0.271]
+FlowAdam shipped (percoord,p1) |    0.3466 |  9.77e-08 |     8.02 |  19100 | cfg=(0.001, 0.0) perseed=[0.274 0.358 0.408]
+         FlowAdam GN c10 (p=1) |    0.3058 |  9.05e-08 |     7.28 |   7266 | cfg=(0.003, 0.0) perseed=[0.266 0.3   0.352]
+FlowAdam-p=0.5 (GN c10) UPGRADE |    0.2778 |  9.04e-08 |     6.64 |   8700 | cfg=(0.003, 0.0) perseed=[0.244 0.271 0.318]
+FlowAdam-p=0.25 (GN c10) UPGRADE |    0.2756 |  9.34e-08 |     6.58 |   8733 | cfg=(0.003, 0.0) perseed=[0.246 0.265 0.316]
+ FlowAdam-p=0 (GN c10) UPGRADE |    0.2691 |  9.48e-08 |     6.48 |   8833 | cfg=(0.003, 0.0) perseed=[0.244 0.257 0.306]
+     Adam + TUNED wd (ceiling) |    0.4838 |  8.05e-08 |    10.76 |  18533 | cfg=(0.01, 0.0001) perseed=[0.512 0.451 0.489]
+----------------------------------------------------------------------------------------------------------------
+
+SPEED x BIAS FRONTIER (recovery, steps) -- lower-left = better:
+                     Adam (p=1): recovery 0.5705  rank 14.5  steps 400
+             Adam-p=0 (no flow): recovery 0.2292  rank 5.8  steps 2100
+       FlowAdam shipped (pc,p1): recovery 0.3466  rank 8.0  steps 19100
+              FlowAdam GN (p=1): recovery 0.3058  rank 7.3  steps 7266
+            FlowAdam-p=0.5 (GN): recovery 0.2778  rank 6.6  steps 8700
+           FlowAdam-p=0.25 (GN): recovery 0.2756  rank 6.6  steps 8733
+              FlowAdam-p=0 (GN): recovery 0.2691  rank 6.5  steps 8833
+
+  FlowAdam-p=0 vs Adam-p=0 (no-flow):  recovery 0.2691 vs 0.2292 (-17.4%)  | steps 8833 vs 2100 (flow not faster)
+
+[done in 6.9 min]

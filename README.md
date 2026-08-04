@@ -178,6 +178,14 @@ attention implementation changes.
   perturbation scales, and the equivariant and Muon controls behind Appendix D.5. It prints the
   662× structural ratio directly.
 - `precond_dial_scalar_check_cpu.txt` — both dial arms, RMS and geometric-mean, behind Section 7.
+- `flowadam_upgrade_cpu.txt` — the Section 10 sweep. Read it with its selection rule in mind:
+  `best()` scores a non-interpolating config `rec + 10`, so each row is the best *interpolating*
+  learning rate, not the fixed 1e-3 anchor Section 10 quotes. It therefore backs the shipped
+  per-coordinate reading (0.3466 against the paper's 0.347) and the geometric-mean `Adam-p=0`
+  endpoint (0.2292, matching `precond_dial_scalar_check_cpu.txt`), but not Section 10's 0.220 and
+  0.169, which are deep fits at 6e-7 and 7e-6. Its closing `-17.4%` line compares the two selected
+  rows, not the fixed-rate pair Section 10 reports. The 0.169 is continued to a true 1e-7 in
+  `dial_flowlong_n40.txt`, whose three seeds mean 0.1691.
 - `muon_phase_diagram_cpu.txt`, `phase_diagram_decay_control_cpu.txt` — the three-seed tail sweep
   behind Section 8 and its cosine-decay control. The three-seed crossing sits at τ*≈0.35; the
   paper's τ*≈0.2 is the sharper ten-seed estimate, as Appendix D notes.
