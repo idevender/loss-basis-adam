@@ -174,6 +174,13 @@ attention implementation changes.
   the Appendix D controls that row rests on.
 - `signum_c9_audit_cpu.txt` — the horizon × schedule grid, the rank-one falsification and the
   spectral-tail sweep behind Appendix D.10, from `experiments/signum_c9_audit.py`.
+- `attention_gauge_multiseed_cpu.txt` — the six Adam gauge pairs, the noise twins at both
+  perturbation scales, and the equivariant and Muon controls behind Appendix D.5. It prints the
+  662× structural ratio directly.
+- `precond_dial_scalar_check_cpu.txt` — both dial arms, RMS and geometric-mean, behind Section 7.
+- `muon_phase_diagram_cpu.txt`, `phase_diagram_decay_control_cpu.txt` — the three-seed tail sweep
+  behind Section 8 and its cosine-decay control. The three-seed crossing sits at τ*≈0.35; the
+  paper's τ*≈0.2 is the sharper ten-seed estimate, as Appendix D notes.
 
 `experiments/nibi_results/` holds the H100 JSONL behind Table 5 (GPU hyperspectral and Pavia),
 Table 9 (twin drift at scale) and Table 11 (the problem-size ladder). These runs need a GPU

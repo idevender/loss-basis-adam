@@ -1,0 +1,39 @@
+================================================================================================================
+ATTENTION GAUGE MULTI-SEED | mod-47 | 2L 4H d64 | 1500 steps full-batch deterministic CPU | drift = rel logit dist (val)
+================================================================================================================
+
+[adam GAUGE-twin x (2 init seeds x 3 gauge draws)] - predicted: step-1 structural split, every pair
+  adam init42 gauge777                   step1  3.6e-03  step100  6.5e-01  final  7.7e-01  |dacc| 0.0008
+  adam init42 gauge999                   step1  3.4e-03  step100  6.7e-01  final  8.0e-01  |dacc| 0.0023
+  adam init42 gauge1234                  step1  3.8e-03  step100  6.5e-01  final  7.7e-01  |dacc| 0.0023
+  adam init123 gauge777                  step1  4.6e-03  step100  5.6e-01  final  6.9e-01  |dacc| 0.0008
+  adam init123 gauge999                  step1  4.9e-03  step100  6.0e-01  final  7.2e-01  |dacc| 0.0000
+  adam init123 gauge1234                 step1  5.4e-03  step100  5.8e-01  final  7.1e-01  |dacc| 0.0008
+
+[adam NOISE-twin, scales 1e-7 / 1e-5] - bound on chaos sensitivity (same basis)
+  adam init42 noise 1e-07                step1  2.9e-07  step100  1.5e-05  final  1.4e-05  |dacc| 0.0000
+  adam init42 noise 1e-05                step1  1.6e-05  step100  6.9e-04  final  1.0e-03  |dacc| 0.0000
+
+[sgd + scalar-Adam GAUGE-twins] - equivariant: must stay at float floor
+  sgd init42 gauge777                    step1  2.8e-07  step100  7.6e-05  final  6.8e-05  |dacc| 0.0000
+  sgd init123 gauge999                   step1  3.0e-07  step100  2.3e-04  final  3.0e-04  |dacc| 0.0000
+  adam_p0rms init42 gauge777             step1  1.5e-07  step100  2.6e-06  final  3.0e-06  |dacc| 0.0000
+  adam_p0rms init123 gauge999            step1  2.1e-07  step100  3.2e-06  final  3.5e-06  |dacc| 0.0000
+
+[muon GAUGE vs NOISE twins] - chaos check: the two curves should track each other
+  muon init42 gauge777                   step1  2.3e-07  step100  1.8e-02  final  8.6e-01  |dacc| 0.0045
+  muon init42 noise 1e-7                 step1  2.8e-07  step100  2.5e-02  final  8.7e-01  |dacc| 0.0000
+     muon init42: mean|log10 gauge/noise| past step100 = 0.04 (CHAOS confirmed (curves track))
+  muon init123 gauge999                  step1  2.4e-07  step100  2.5e-01  final  8.0e-01  |dacc| 0.0000
+  muon init123 noise 1e-7                step1  2.7e-07  step100  2.3e-01  final  8.0e-01  |dacc| 0.0045
+     muon init123: mean|log10 gauge/noise| past step100 = 0.01 (CHAOS confirmed (curves track))
+
+================================================================================================================
+SUMMARY:
+  adam gauge step-1 split: min 3.4e-03  max 5.4e-03  (n=6)
+  adam gauge final drift : min 6.9e-01  max 8.0e-01
+  adam noise final drift : 1e-7 -> 1.4e-05   1e-5 -> 1.0e-03
+  structural ratio (min gauge final / max noise final): 662x
+  equivariant (sgd/p0rms) max final drift: 3.0e-04
+
+[done in 13.2 min]

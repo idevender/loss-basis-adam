@@ -1,0 +1,25 @@
+================================================================================================================
+MUON PHASE DIAGRAM | sensing 40x40 head-rank 3 + orthogonal tail | m=462 (2x dof3) init=0.001 wd=0 | 3 seeds | tau^2 = tail energy fraction
+Hypothesis: Muon is best at tau=0 and may degrade rapidly as the spectral tail grows,
+with a crossover against GD at some tau*. Adam provides a coordinate-wise baseline.
+================================================================================================================
+  tau |       gd_rec     adam_rec     muon_rec  shampoo_rec |      gd_er    adam_er    muon_er  shampoo_er | muon-vs-gd
+----------------------------------------------------------------------------------------------------------------
+ 0.00 |       0.1313       0.5810       0.0000       0.2881 |       4.52      14.52       2.95       7.03 | MUON wins
+ 0.05 |       0.1677       0.5821       0.0945       0.2976 |       4.92      14.56       3.73       7.16 | MUON wins
+ 0.10 |       0.2310       0.5980       0.1846       0.3233 |       5.61      14.74       4.29       7.55 | MUON wins
+ 0.20 |       0.3687       0.6435       0.3588       0.4056 |       7.01      15.47       5.67       8.72 | MUON wins
+ 0.35 |       0.5675       0.7210       0.5873       0.5723 |       8.86      16.79       7.22      11.09 | GD wins
+ 0.50 |       0.7464       0.7993       0.7649       0.7332 |      10.46      18.37       8.07      12.79 | GD wins
+----------------------------------------------------------------------------------------------------------------
+
+PHASE BOUNDARY: Muon loses its edge to GD at tau ~ 0.35 (tail energy ~ 12%)
+train-loss check (all should interpolate):
+  tau=0.00: gd=7.1e-08  adam=1.3e-11  muon=4.3e-08  shampoo=5.9e-08
+  tau=0.05: gd=6.1e-08  adam=1.2e-11  muon=4.8e-08  shampoo=5.7e-08
+  tau=0.10: gd=5.9e-08  adam=4.7e-08  muon=6.9e-08  shampoo=6.4e-08
+  tau=0.20: gd=2.4e-08  adam=9.0e-09  muon=4.2e-08  shampoo=5.0e-08
+  tau=0.35: gd=1.5e-08  adam=4.1e-11  muon=1.6e-08  shampoo=2.7e-08
+  tau=0.50: gd=1.3e-08  adam=1.9e-11  muon=1.4e-08  shampoo=2.9e-08
+
+[done in 4.8 min]
