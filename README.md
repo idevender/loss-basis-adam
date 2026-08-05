@@ -175,8 +175,12 @@ Two of those logs will not line up with the paper unless you know why:
   It backs the per-coordinate reading (0.3466 vs. the paper's 0.347) and the geometric-mean
   `Adam-p=0` endpoint (0.2292, matching the dial log), but not Section 10's 0.220 and 0.169, which
   are deep fits at 6e-7 and 7e-6. Its closing `-17.4%` compares the two selected rows, not the
-  fixed-rate pair. The 0.169 is continued to a true 1e-7 in `dial_flowlong_n40.txt` (three seeds,
-  mean 0.1691).
+  fixed-rate pair.
+- **`dial_flowlong_n40.txt`.** This continues the finer-grid n=40 FlowAdam-p cell, the one that
+  clears the 1e-7 bar only past the sweep's 30k steps — not the 0.169. All ten seeds interpolate
+  by 6e4 steps and mean 0.1475 +- 0.0357, the value Section 10 quotes. (Section 10's other
+  extended-budget number, 0.1694 -> 0.1691, is the separate 120k-step early-stopping control from
+  `flowadam_p_interp_control.py`, Appendix D.8.)
 - **`muon_phase_diagram_cpu.txt`.** Its three-seed crossing sits at τ*≈0.35; the paper's τ*≈0.2 is
   the sharper ten-seed estimate, as Appendix D notes.
 
