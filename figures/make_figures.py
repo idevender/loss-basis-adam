@@ -264,19 +264,23 @@ def fig_dial():
     ax.plot(p, er, "-", color=C["adam"], lw=2.0, zorder=3)
     ax.scatter(p, er, s=34, color=C["adam"], zorder=4, edgecolor="white", linewidth=0.7)
 
+    # Left-aligned above its own marker so no leader is needed: on the inverted axis ha="left"
+    # runs the text rightward into open space instead of off the spine. ylim buys the headroom.
     ax.annotate(f"Adam ($p{{=}}1$)\nrec {rc[0]:.3f}", xy=(1.0, 14.5),
-                xytext=(0.72, 15.4), fontsize=8.4, color=C["adam"], ha="center", va="top")
+                xytext=(1.02, 16.9), fontsize=8.4, color=C["adam"], ha="left", va="top")
+    # Right-aligned so the label ends directly over its own marker, letting the leader drop
+    # vertically into the empty column above p=0. A slanted approach runs parallel to the curve
+    # here, so backing the head off the marker leaves it pointing at the line instead.
     ax.annotate(f"scalar-Adam ($p{{=}}0$)\nrec {rc[-1]:.3f}", xy=(0.0, 5.4),
-                xytext=(0.16, 7.6), fontsize=8.4, color=C["adam"], ha="center", va="bottom",
-                arrowprops=dict(arrowstyle="->", color=C["adam"], lw=0.9,
-                                connectionstyle="arc3,rad=0.2"))
+                xytext=(0.0, 7.5), fontsize=8.4, color=C["adam"], ha="right", va="bottom",
+                arrowprops=dict(arrowstyle="->", color=C["adam"], lw=0.9, shrinkB=5))
 
     ax.set_xlabel(r"preconditioner anisotropy $p$")
     ax.set_ylabel("effective rank of solution")
     ax.set_xticks([1.0, 0.75, 0.5, 0.25, 0.0])
     ax.set_xticklabels(["1\n(Adam)", "0.75", "0.5", "0.25", "0\n(scalar)"])
     ax.set_xlim(1.08, -0.12)   # inverted: Adam (per-coord) left -> scalar right
-    ax.set_ylim(2.2, 15.6)
+    ax.set_ylim(2.2, 17.0)
     fig.tight_layout()
     _save(fig, "dial")
 
