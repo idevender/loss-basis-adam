@@ -250,10 +250,10 @@ class FlowAdam(Optimizer):
                 """Gradient flow ODE: dtheta/dt = -clip(nablaL(theta))
 
                 clip_mode='percoord' (default): elementwise clip to [-1, 1] - bounds each
-                    coordinate but distorts the gradient DIRECTION when coordinates differ in
+                    coordinate but distorts the gradient direction when coordinates differ in
                     scale (sign-like), which throttles the gradient-flow low-rank bias.
                 clip_mode='globalnorm': scale the whole gradient vector to norm <= 1 - bounds
-                    magnitude while preserving DIRECTION exactly, retaining the flow geometry.
+                    magnitude while preserving direction exactly, retaining the flow geometry.
                 """
                 stats['_current_ode_nfe'] += 1
 

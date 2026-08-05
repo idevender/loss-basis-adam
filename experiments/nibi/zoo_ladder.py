@@ -1,14 +1,13 @@
-"""
-Optimizer-zoo replication ladder (Appendix C8).
+"""Optimizer-zoo replication ladder (Appendix D.9).
 
-Runs the full zoo across problem sizes, ranks, and m/dof with 10 seeds per cell. Per
-(n, rank, m/dof) and optimizer: phase 1 sweeps the lr grid over 3 selection seeds under the
-paper protocol schedule (recording the full recovery-vs-lr curves, the can/cannot axis at scale);
-phase 2 runs 7 extension seeds at the selected lr for the 10-seed table; phase 3 (--cosine-all)
-re-runs all seeds under the uniform cosine schedule (Appendix C1 control).
+Runs the zoo across problem sizes, ranks and m/dof, 10 seeds per cell. Per (n, rank, m/dof) and
+optimizer: phase 1 sweeps the lr grid over 3 selection seeds under the paper schedule, recording
+the full recovery-vs-lr curves; phase 2 runs 7 extension seeds at the selected lr for the
+10-seed table; phase 3 (--cosine-all) re-runs every seed under the uniform cosine schedule, the
+Appendix D.1 control.
 
 Per-size lr grids scale by family: GD ~ (40/n); Muon, Shampoo, ScaledGD ~ sqrt(40/n); Adam and
-sign families ~ sqrt(n/40). At n=40 every grid reduces to the CPU paper grid.
+the sign family ~ sqrt(n/40). At n=40 every grid reduces to the CPU paper grid.
 """
 from __future__ import annotations
 

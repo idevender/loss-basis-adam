@@ -1,14 +1,13 @@
-"""
-FlowAdam-p: softening the preconditioner while keeping the flow (Section 10).
+"""FlowAdam-p: softening the preconditioner while keeping the flow (Section 10).
 
-Softening Adam's per-coordinate denominator (precond_power p: 1 -> 0) recovers the low-rank bias but
-costs several times the steps. The flow injects the un-preconditioned GD direction occasionally, but
-stock FlowAdam weakens the injected direction because the same sqrt(v) rescales it on the next step.
-FlowAdam-p combines the flow with the softened preconditioner so the injected direction survives,
-aiming to reach GD's recovery in fewer steps than softened-Adam alone.
+Softening Adam's denominator (precond_power p: 1 -> 0) restores the low-rank bias but costs
+several times the steps. The flow injects the un-preconditioned GD direction occasionally,
+though stock FlowAdam then weakens it, since the same sqrt(v) rescales it on the next step.
+FlowAdam-p pairs the flow with the softened preconditioner so the injected direction survives,
+aiming at GD's recovery in fewer steps than the dial alone.
 
-Testbed: wd=0 matrix sensing (restoration_probe), run to interpolation, lr tuned, 3 seeds. Reports
-recovery, effective rank, and steps to interpolation.
+Testbed: wd=0 sensing (restoration_probe), run to interpolation, lr tuned, 3 seeds. Reports
+recovery, effective rank, steps to interpolation.
 """
 
 import numpy as np

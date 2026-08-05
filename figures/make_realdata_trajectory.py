@@ -1,13 +1,11 @@
-"""
-Figure 5: the matched-training-loss trajectory on Indian Pines (Section 9).
+"""Figure 5: the matched-training-loss trajectory on Indian Pines (Section 9).
 
-Reads the SAME result file that produced Table 5 (experiments/nibi_results/indianpines_gpu.jsonl,
-the GPU float64 run), re-applies the train-only learning-rate rule of Appendix C.5, and asserts
-that every number the paper already prints comes back out before anything is plotted.  If any
-assertion fires, no figure is written: that is the guard against a fresh figure disagreeing with
-a published table.
+Reads the file that produced Table 5 (experiments/nibi_results/indianpines_gpu.jsonl, the GPU
+float64 run), re-applies the train-only lr rule of Appendix D.6, and checks that every number
+the paper prints comes back out before anything is plotted. If an assertion fires, no figure is
+written, so a fresh figure cannot quietly disagree with a published table.
 
-Usage:  python figures/make_realdata_trajectory.py
+Usage: python figures/make_realdata_trajectory.py
 """
 
 import json
@@ -27,7 +25,7 @@ RESULTS = os.path.join(HERE, "..", "experiments", "nibi_results", "indianpines_g
 LEVELS = ["0.003", "0.001", "0.0003", "0.0001", "3e-05", "1e-05"]
 DENS = 0.15                      # the m/dof_24 ~ 1.15 cell narrated in Section 9
 METHODS = ["gd", "adam", "muon"]  # exactly the three the text discusses
-SEL_SEEDS = [42, 123]            # Appendix C.5: the lr is chosen on these two seeds only
+SEL_SEEDS = [42, 123]            # Appendix D.6: the lr is chosen on these two seeds only
 EVAL_SEEDS = [42, 123, 456, 789]  # all four are plotted, none of them selects the lr
 
 
@@ -43,7 +41,7 @@ def load():
 
 
 def select_lr(rows, opt):
-    """Appendix C.5's train-only rule: deepest matched train level reached by every seed,
+    """Appendix D.6's train-only rule: deepest matched train level reached by every seed,
     ties broken by fewest steps.  SEL_SEEDS only, so 456 and 789 stay held out."""
     by_lr = {}
     for r in rows:

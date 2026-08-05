@@ -1,15 +1,13 @@
-"""
-Attention-head gauge experiment (Section 7).
+"""Attention-head gauge experiment (Section 6).
 
-The QK^T factorization in an attention head has the same gauge symmetry as UV^T: for a per-head
-orthogonal A_h, W_Q^h -> A_h W_Q^h and W_K^h -> A_h W_K^h leave the logits q_h . k_h unchanged for
-every input. Two such initializations are the same function under any gauge-equivariant optimizer
-(SGD, momentum, shared-scalar Adam, Muon), while Adam's per-coordinate second moment reads the
-arbitrary basis and the two runs split in function space.
+A head's QK^T factorization carries the same symmetry as UV^T: for per-head orthogonal A_h,
+sending W_Q^h -> A_h W_Q^h and W_K^h -> A_h W_K^h leaves the logits unchanged on every input.
+Two such initializations are the same function to a gauge-equivariant optimizer, while Adam
+reads the basis and the runs split in function space.
 
-Protocol: mod-47 addition transformer (2 layers, 4 heads, d=64, no qk-norm so the gauge is exact),
-full-batch, deterministic CPU, identical data order; an A=I twin is the float-noise control.
-Metrics: relative logit drift, per-layer QK^T product drift, and validation accuracy of both copies.
+Protocol: mod-47 addition transformer, 2 layers, 4 heads, d=64, no qk-norm so the gauge is
+exact; full-batch, deterministic CPU, identical data order. An A=I twin is the float-noise
+control. Metrics: relative logit drift, per-layer QK^T drift, validation accuracy of both copies.
 """
 from __future__ import annotations
 import math, os, sys, time

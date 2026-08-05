@@ -1,16 +1,15 @@
-"""
-Anisotropy dial, scalar-convention check (Section 6).
+"""Anisotropy dial, scalar-convention check (Section 7).
 
-The dial Adam-p uses denom_i = s_i^p * sbar^(1-p) with s_i = sqrt(vhat_i) and sbar a shared scalar.
+The dial Adam-p uses denom_i = s_i^p * sbar^(1-p), s_i = sqrt(vhat_i), sbar a shared scalar.
 Two conventions for sbar:
-  'rms'     = sqrt(mean(vhat)): a function of ||G||_F only, hence exactly gauge-invariant; the p=0
-              endpoint is exactly the zoo's equivariant scalar-Adam.
-  'geomean' = exp(mean(log s_i)): the legacy convention, invariant only in the flow limit.
-The paper uses 'rms'. This re-derives the full dial table under both conventions to show the
-mechanism is insensitive to the choice.
+  'rms'     = sqrt(mean(vhat)), a function of ||G||_F alone and so exactly gauge-invariant;
+              its p=0 endpoint is the zoo's equivariant scalar-Adam.
+  'geomean' = exp(mean(log s_i)), the legacy convention, invariant only in the flow limit.
+The paper uses 'rms'. This runs the dial under both to show the mechanism does not depend on
+the choice.
 
-Protocol: wd=0, run to interpolation (train < 1e-7), lr tuned per (p, scalar) by best recovery among
-interpolating rates, 3 paired seeds, sensing 40x40 rank 3, m = 2 x dof.
+Protocol: wd=0, run to interpolation (train < 1e-7), lr tuned per (p, scalar) by best recovery
+among interpolating rates, 3 paired seeds, sensing 40x40 rank 3, m = 2 x dof.
 """
 
 import numpy as np

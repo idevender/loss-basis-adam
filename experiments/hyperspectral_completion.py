@@ -1,15 +1,12 @@
-"""
-Legacy hyperspectral completion loader and exploratory CPU smoke test.
+"""Earlier hyperspectral completion loader and CPU smoke test.
 
-Loads the Indian Pines hyperspectral cube (rows = pixels, columns = spectral bands), removes band
-means, masks entries, and runs dense low-rank-residual completion. Provides the load_matrix and
-make_split helpers reused by the matched-loss demos. Optimizer arms: Adam with optimizer weight
-decay, Adam with the same L2 in the loss, softened Adam (no flow), FlowAdam, and FlowAdam with the
-softened preconditioner.
+Loads the Indian Pines cube (rows = pixels, columns = bands), removes band means, masks entries
+and runs dense low-rank-residual completion. Supplies the load_matrix and make_split helpers the
+matched-loss demos reuse. Arms: Adam with optimizer weight decay, Adam with the same L2 in the
+loss, softened Adam without flow, FlowAdam, and FlowAdam with the softened preconditioner.
 
-This script selects configurations by held-out RMSE and uses a short, density-0.50 protocol. It is
-retained as a loader/smoke test only and is not the source of the paper's real-data results. Use
-``hyperspectral_wilson_v3.py`` for the canonical CPU reproduction with train-only selection.
+Selects on held-out RMSE at density 0.50, so it is a loader and smoke test rather than a source
+of paper results. hyperspectral_wilson_v3.py is the canonical CPU reproduction.
 """
 from __future__ import annotations
 

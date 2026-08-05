@@ -1,12 +1,9 @@
-"""
-Equivariance and balancedness probe (Section 6).
+"""Equivariance and balancedness probe (Section 7).
 
-For W = U V^T the factorization has a gauge symmetry (U, V) -> (UQ, VQ), Q orthogonal, that leaves W
-unchanged; gradient flow respects it, coordinate-wise Adam does not because its second-moment
-buffers live in the factor coordinate system. Two runs are initialized with the same W0 but
-different latent gauge, and the probe measures product drift ||W_base - W_gauge|| / ||W_base||, the
-recovery and effective-rank gaps, and the balancedness invariant ||U^T U - V^T V||_F. Equivariant
-methods give near-zero drift; Adam gives large drift and worse rank and recovery.
+Two runs start from the same W0 but a different latent gauge. The probe measures product drift
+||W_base - W_gauge|| / ||W_base||, the recovery and effective-rank gaps, and the balancedness
+invariant ||U^T U - V^T V||_F. Equivariant methods give near-zero drift; Adam drifts and lands
+at worse rank and recovery, because its second-moment buffers live in the factor coordinates.
 """
 from __future__ import annotations
 

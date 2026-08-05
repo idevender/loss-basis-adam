@@ -1,11 +1,10 @@
-"""
-Extended-budget audit of the one dial cell that never interpolated.
+"""Extended-budget audit of the one dial cell that never interpolated.
 
-At n=40 the FlowAdam-p (p=0) row was selected at lr=1e-3 by the collector, but every seed hit the
-30k-step cap with a training loss of 1.6e-6..4.4e-5 -- above the paper's 1e-7 interpolation bar. The
-paper's convention for such a cell (App C.8) is to continue it to a true 1e-7 and report the value
-there, rather than quote the early-stopped reading. This runs exactly that continuation: same seeds,
-same lr, same optimizer settings, only the step budget changes.
+At n=40 the collector selected the FlowAdam-p (p=0) row at lr=1e-3, but every seed hit the
+30k-step cap at a training loss of 1.6e-6..4.4e-5, above the paper's 1e-7 bar. The convention
+for such a cell (Appendix D.9) is to continue it to a true 1e-7 and report the value there
+rather than the early-stopped reading. This is that continuation: same seeds, same lr, same
+optimizer settings, longer budget.
 """
 from __future__ import annotations
 import argparse, os, sys, time

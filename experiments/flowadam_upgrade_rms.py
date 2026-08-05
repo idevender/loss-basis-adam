@@ -1,10 +1,9 @@
-"""
-FlowAdam-p under the RMS scalar (Section 10 numbers).
+"""FlowAdam-p under the RMS scalar (the Section 10 numbers).
 
-Re-derives the FlowAdam-p rows of flowadam_upgrade.py under the gauge-invariant RMS scalar
-convention (precond_scalar='rms'; see precond_dial_scalar_check.py), so the flow-beyond-the-dial
-comparison is matched against the RMS dial-alone reference. Also re-runs the geomean p=0 row as a
-bridge to the legacy numbers.
+Re-derives the FlowAdam-p rows of flowadam_upgrade.py under the gauge-invariant RMS convention
+(precond_scalar='rms', see precond_dial_scalar_check.py) so the flow-beyond-the-dial comparison
+is matched against the RMS dial-alone reference. Also re-runs the geomean p=0 row as a bridge to
+the legacy numbers.
 """
 import functools
 import sys, os, time

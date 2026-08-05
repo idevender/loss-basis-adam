@@ -1,17 +1,15 @@
-"""
-Numerical verification of every algebraic claim in the paper.
+"""Numerical verification of the paper's algebraic claims.
 
-Each test names the paper object it checks and evaluates BOTH sides of the claimed identity
-numerically in float64 at random points, then asserts agreement at machine precision.  Nothing
-here is mocked, stubbed, or asserted against a hand-copied constant: every number on both sides
-of every assertion is computed from a real loss, real autograd gradients, and the real update
-rules (with Muon's Newton-Schulz iteration and Shampoo's inverse roots imported from the
-experiment code that produced the paper's tables).
+Each test names the paper object it checks, evaluates both sides of the claimed identity in
+float64 at random points, and asserts agreement at machine precision. Nothing is mocked or
+compared against a hand-copied constant: every number comes from a real loss, real autograd
+gradients and the real update rules, with Muon's Newton-Schulz iteration and Shampoo's inverse
+roots imported from the experiment code behind the paper's tables.
 
-The suite is adversarial by construction: every positive claim is paired with a negative control
-that must FAIL the same check.  A harness bug that silently makes both runs identical (Q = I, a
-dead gradient, a no-op update) would make the equivariance tests pass vacuously, so those bugs
-are caught by the coordinate-wise tests, which assert a *large* violation.
+Every positive claim is paired with a negative control that has to fail the same check. That is
+what rules out a vacuous pass: a harness bug making the two runs identical (Q = I, a dead
+gradient, a no-op update) would satisfy the equivariance tests, but the coordinate-wise tests
+assert a large violation and would catch it.
 
 Run:  pytest -q tests/test_paper_identities.py
   or: python tests/test_paper_identities.py
@@ -168,7 +166,7 @@ def _momentum(state, gs, lr, beta=0.9, **kw):
 
 
 def _scalar_adam(state, gs, lr, b1=0.9, b2=0.999, eps=1e-8, **kw):
-    """Proposition 4.2(2): shared scalar nu, an EMA of mean(g^2) pooled over BOTH factors."""
+    """Proposition 4.2(2): shared scalar nu, an EMA of mean(g^2) pooled over both factors."""
     state.setdefault("m", [torch.zeros_like(g) for g in gs])
     state.setdefault("nu", 0.0)
     state["t"] = state.get("t", 0) + 1
@@ -347,7 +345,7 @@ def test_prop42_scalar_ema_equals_mean_of_the_entrywise_ema():
     mean_v = torch.cat([v[0].reshape(-1), v[1].reshape(-1)]).mean().item()
     assert abs(nu - mean_v) / mean_v < 1e-13
 
-    # and the rule as implemented must accumulate exactly that scalar, pooled over BOTH factors.
+    # and the rule as implemented must accumulate exactly that scalar, pooled over both factors.
     # (Pooling over one factor alone would still be gauge-invariant, so the equivariance tests
     # cannot see this; it has to be pinned directly against the definition.)
     A2, y2, n2, k2 = make_problem(seed=3)
@@ -560,7 +558,7 @@ def test_muon_newton_schulz_equivariance_at_every_truncation():
 
 
 def test_shampoo_step_matches_the_displayed_two_sided_rule():
-    """Proposition 4.2(4) as displayed: Delta = (L+lam I)^-1/4 G (R+lam I)^-1/4, with BOTH roots.
+    """Proposition 4.2(4) as displayed: Delta = (L+lam I)^-1/4 G (R+lam I)^-1/4, with both roots.
     Dropping the right root would leave the rule gauge-equivariant (it is then a Gram-determined
     left preconditioner, Theorem 4.5), so the equivariance tests cannot detect that error and
     the shape of the rule has to be pinned against the display directly."""

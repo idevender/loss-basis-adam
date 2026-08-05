@@ -1,14 +1,12 @@
 """Generate the paper figures.
 
-Renders the attention-gauge, dial, phase-diagram, and zoo-map figures as vector PDFs, using a
-colorblind-safe palette with one fixed hue per entity and serif typography matched to the paper body.
-The plotted numbers are the final experiment outputs; the dial uses the RMS
-(exactly-equivariant-at-p=0) convention. The zoo map recomputes Table 2's selection from
-logs/optimizer_zoo_bias.jsonl; the other three carry their run's numbers inline, each labelled
-with the archived file it came from.
+Renders the attention-gauge, dial, phase-diagram and zoo-map figures as vector PDFs, on a
+colorblind-safe palette with one fixed hue per entity and serif type matched to the paper body.
+The dial uses the RMS convention, the one that is exactly equivariant at p=0. The zoo map
+recomputes Table 2's selection from logs/optimizer_zoo_bias.jsonl; the other three carry their
+run's numbers inline, each labelled with the archived file it came from.
 
-Writes vector PDFs into this directory. These are the exact figures the manuscript includes; copy
-them into the paper tree when they change.
+Writes the PDFs into this directory; copy them into the paper tree when they change.
 
 Run: python make_figures.py
 """

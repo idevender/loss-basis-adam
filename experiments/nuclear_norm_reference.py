@@ -1,8 +1,8 @@
 """Min-nuclear-norm interpolant on the exact zoo problem instances (seeds 42/123/456).
 
-min ||X||_*  s.t.  A vec(X) = y,  solved by Douglas-Rachford / ADMM:
+min ||X||_*  s.t.  A vec(X) = y,  by Douglas-Rachford / ADMM:
   X <- SVT_rho(Z - Uu);  Z <- Proj_{Avec=y}(X + Uu);  Uu <- Uu + X - Z
-Projection is exact: Proj(W) = W + A^T (AA^T)^{-1} (y - A vec(W)).
+The projection is exact: Proj(W) = W + A^T (AA^T)^{-1} (y - A vec(W)).
 """
 import numpy as np, torch
 

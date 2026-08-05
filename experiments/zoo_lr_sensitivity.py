@@ -1,9 +1,8 @@
-"""
-Learning-rate sensitivity of the zoo split (Section 5.1, Appendix C2).
+"""Learning-rate sensitivity of the zoo split (Section 5, Appendix D.2).
 
-Prints recovery, effective rank, and train loss at every learning rate on a dense grid for the five
-main methods. Tests the selection-rule-free statement: in the gradient-flow limit (smallest
-interpolating lr) the equivariant methods recover while Adam does not, at any lr.
+Prints recovery, effective rank and train loss at every lr of a dense grid for the five main
+methods, so the split can be read without a selection rule: at the gradient-flow limit, the
+smallest interpolating lr, the equivariant methods recover and Adam does not.
 """
 from __future__ import annotations
 import os, sys, time
@@ -29,7 +28,7 @@ def main():
     print("=" * 100, flush=True)
     print(f"ZOO LR-SENSITIVITY | sensing {zoo.N}x{zoo.N} r*{zoo.R_STAR} m={zoo.M} init={zoo.INIT} wd=0 | "
           f"{len(SEEDS)} seeds | full lr curves (muon decayed as in zoo)", flush=True)
-    print("Read: does Adam destroy at EVERY lr? Do equivariant methods recover at their SMALLEST "
+    print("Read: does Adam destroy at every lr? Do equivariant methods recover at their smallest "
           "interpolating lr (flow limit)?", flush=True)
     print("=" * 100, flush=True)
     old_dec = zoo.DECAYED

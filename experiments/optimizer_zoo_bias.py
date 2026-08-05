@@ -1,18 +1,11 @@
-"""
-Optimizer-zoo geometry map (Section 5).
+"""Optimizer-zoo geometry map (Section 5).
 
-Runs nine optimizers on the factored matrix-sensing task and measures whether each preserves or
-destroys gradient descent's low-rank implicit bias. The factored loss L(UV^T) is invariant under
-(U, V) -> (UQ, VQ) for orthogonal Q. Optimizers whose update commutes with this action (GD,
-momentum, shared-scalar Adam, Muon, Shampoo) follow gauge-covariant trajectories and preserve the
-bias; coordinate-wise methods (Adam, RMSProp, signum, Lion, Adafactor) do not and are predicted to
-destroy it.
+Runs nine optimizers on the factored sensing task and reports which of them keep gradient
+descent's low-rank bias. Testbed: wd=0, 40x40 rank 3, k=40, m = 2 x dof, init 1e-3, run to
+interpolation, 3 seeds. Metrics: recovery, effective rank, balancedness ||U^T U - V^T V||_F.
 
-Testbed: wd=0 sensing ladder (40x40, rank 3, k=40, m = 2 x dof), small init, run to interpolation,
-3 seeds. Reports recovery error, effective rank, and the balancedness invariant ||U^T U - V^T V||_F.
-
-Writes every (method, lr, seed) run to logs/optimizer_zoo_bias.jsonl; make_figures.py reads that
-file rather than literals, so Figure 1 and Table 2 cannot drift from the raw output.
+Writes every (method, lr, seed) run to logs/optimizer_zoo_bias.jsonl, which make_figures.py
+reads for Figure 1 and Table 2.
 """
 from __future__ import annotations
 import json, math, os, sys, time

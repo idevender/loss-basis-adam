@@ -1,12 +1,11 @@
-"""
-Canonical CPU hyperspectral matched-loss protocol with train-only lr selection (Section 9, Appendix C5).
+"""Indian Pines at matched training loss, with train-only lr selection (Section 9, Appendix D.6).
 
-Hardens the matched-loss demo against two confounds: (a) learning rates are selected per method and
-density by a train-only rule (the lr that reaches the deepest matched train level, ties broken by
-fewest steps; selection seeds {42, 123}), removing test-selection leakage; (b) a GD transparency
-table reports GD at every grid lr, so the effect is not an edge-of-stability artifact. Two fresh
-seeds {456, 789} are added at the selected lr for a 4-seed matched-loss table. Reuses
-hyperspectral_wilson_v2.run_traj; everything wd=0.
+Hardens the matched-loss protocol against two confounds. Learning rates are picked per method
+and density by a train-only rule (the lr reaching the deepest matched train level, ties by
+fewest steps, selection seeds {42, 123}), which removes test-selection leakage; and a GD
+transparency table reports GD at every grid lr, so the effect is not an edge-of-stability
+artifact. Seeds {456, 789} are then added at the selected lr for a 4-seed table. Reuses
+hyperspectral_wilson_v2.run_traj; wd=0 throughout.
 """
 from __future__ import annotations
 import os, sys, time
@@ -37,7 +36,7 @@ def traj(kind, x, dens, seed, lr, cache={}):
 
 
 def depth_speed(hits_list):
-    """(-#levels reached by ALL seeds, mean steps at the deepest common level) - train-only score."""
+    """(-#levels reached by all seeds, mean steps at the deepest common level) - train-only score."""
     common = [lvl for lvl in LEVELS if all(lvl in h for h in hits_list)]
     if not common:
         return (0, float('inf')), None

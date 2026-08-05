@@ -1,12 +1,11 @@
-"""
-Recovery without equivariance: annealed sign descent (Appendix C9).
+"""Recovery without equivariance: annealed sign descent (Appendix D.10).
 
-Audits the one coordinate-wise method that recovers at long horizons (signum):
+Audits signum, the one coordinate-wise method that recovers at long horizons:
   P1 mechanism: is signum's windowed displacement rank-1 dominated? (falsification test)
   P2 horizon x schedule: is the fail-at-2e4 / work-at-4e4 boundary a schedule-shape artifact?
-  P3 spectral tail: does signum's long-anneal recovery survive spectral tails?
-Protocol identical to optimizer_zoo_bias.py and muon_phase_diagram.py (n=40, rank 3, m = 2 x dof,
-init 1e-3, wd=0).
+  P3 spectral tail: does the long-anneal recovery survive spectral tails?
+Protocol as in optimizer_zoo_bias.py and muon_phase_diagram.py: n=40, rank 3, m = 2 x dof,
+init 1e-3, wd=0.
 """
 import math, os, sys, time
 import numpy as np

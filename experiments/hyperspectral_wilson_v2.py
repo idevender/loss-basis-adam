@@ -1,14 +1,13 @@
-"""
-Legacy hyperspectral matched-train-loss protocol.
+"""Earlier hyperspectral matched-train-loss protocol.
 
-Records the full (train, test, effective-rank) trajectory and compares methods at matched train-loss
-levels, so held-out differences reflect the interpolant chosen and not implicit early stopping. Also
-quantifies Muon's spectral-tail behaviour on real data (effective rank inflates while it recovers
-exactly on exact-low-rank synthetic targets), the regime-dependence formalized in Section 8.
+Records the full (train, test, effective rank) trajectory and compares methods at matched
+train-loss levels, so held-out differences reflect the interpolant rather than early stopping.
+Also measures Muon's spectral-tail behaviour on real data, where effective rank inflates even
+though it recovers exactly on exact-low-rank synthetic targets, the regime dependence Section 8
+formalizes.
 
-This fixed-learning-rate, two-seed version is retained for protocol comparison. Use
-``hyperspectral_wilson_v3.py`` for the canonical CPU reproduction with train-only learning-rate
-selection.
+This fixed-lr, two-seed version is kept for protocol comparison. hyperspectral_wilson_v3.py is
+the canonical CPU reproduction.
 """
 from __future__ import annotations
 import math, os, sys, time
@@ -110,7 +109,7 @@ def main():
     print("=" * 118, flush=True)
     print(f"HYPERSPECTRAL WILSON v2 - MATCHED TRAIN LOSS | Indian Pines {tuple(x.shape)} | rank {K_MODEL} "
           f"init {INIT} wd=0 | {len(SEEDS)} seeds | fixed lrs {LRS}", flush=True)
-    print("Compare held-out RMSE + eff_rank AT THE SAME TRAIN LOSS -> pure interpolant-selection, "
+    print("Compare held-out RMSE + eff_rank at matched train loss -> pure interpolant-selection, "
           "no early-stopping confound.", flush=True)
     print("=" * 118, flush=True)
     for dens in DENSITIES:

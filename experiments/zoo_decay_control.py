@@ -1,11 +1,10 @@
-"""
-Schedule-symmetrization control for the zoo split (Appendix C1).
+"""Schedule-symmetrization control for the zoo split (Appendix D.1).
 
-In the zoo, the constant-update-norm methods (Muon, signum, Lion) use cosine decay to reach
-interpolation while the others run at constant lr. This control runs every method under both
-schedules (plus a full-horizon decay variant) and reports two lr-selection rules (lowest recovery
-among interpolating lrs; fewest steps to interpolate). It checks that the equivariant vs
-coordinate-wise split survives both schedules and both rules.
+In the zoo the constant-update-norm methods (Muon, signum, Lion) use cosine decay to reach
+interpolation while the rest run at constant lr. This runs every method under both schedules,
+plus a full-horizon decay variant, and reports two lr-selection rules: lowest recovery among
+interpolating rates, and fewest steps to interpolate. The split should survive both schedules
+under both rules.
 
 Reuses optimizer_zoo_bias.run via module-global override.
 """

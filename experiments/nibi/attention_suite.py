@@ -1,15 +1,13 @@
-"""
-Attention gauge at scale, deterministic and stochastic twins (Appendix C8).
+"""Attention gauge at scale, deterministic and stochastic twins (Appendix D.9).
 
---task mod : modular-addition transformer, full-batch, the exact twin protocol of Section 7
-             (gauge / A=I / noise twins) at configurable depth and width (2L d64, 4L d128, 6L d256),
+--task mod : modular-addition transformer, full-batch, the twin protocol of Section 6
+             (gauge / A=I / noise) at configurable depth and width (2L d64, 4L d128, 6L d256),
              with per-head QK^T drift statistics.
---task text: char-level language modeling on real text, mini-batch with an identical deterministic
-             batch schedule for both twins, extending the basis-dependence claim to stochastic
-             training.
+--task text: char-level language modeling on real text, mini-batch with the same deterministic
+             batch schedule for both twins, extending the claim to stochastic training.
 
-Full determinism is enforced (pinned CUBLAS workspace, deterministic algorithms, one-hot embedding
-matmuls, manual log-softmax cross-entropy); the A=I twin reports drift exactly 0.
+Determinism is enforced throughout (pinned CUBLAS workspace, deterministic algorithms, one-hot
+embedding matmuls, manual log-softmax cross-entropy), so the A=I twin reports drift of exactly 0.
 """
 from __future__ import annotations
 

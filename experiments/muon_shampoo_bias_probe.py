@@ -1,11 +1,10 @@
-"""
-Structured-optimizer bias probe: Muon and Shampoo (Section 5, balancedness).
+"""Structured-optimizer bias probe: Muon and Shampoo (Section 5).
 
-Tests whether the structured optimizers Muon (orthogonalized matrix update) and Shampoo (full-matrix
-preconditioner) preserve GD's low-rank implicit bias that Adam destroys, on the wd=0 matrix-sensing
-restoration ladder (40x40, rank 3, run to interpolation). Anchors: GD and flow give effective rank
-~4 (bias intact), Adam ~14 (bias destroyed). Both structured methods land near 4, confirming that
-geometry-respecting preconditioning preserves the bias while per-coordinate anisotropy destroys it.
+Asks whether Muon's orthogonalized update and Shampoo's full-matrix preconditioner keep the
+low-rank bias that Adam loses, on the wd=0 sensing ladder (40x40, rank 3, run to
+interpolation). Anchors: GD and flow reach effective rank ~4, Adam ~14. Both structured methods
+land near 4, which puts the cause in the geometry of the preconditioner rather than in
+balancedness.
 """
 from __future__ import annotations
 import os, sys, time

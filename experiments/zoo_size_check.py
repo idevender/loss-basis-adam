@@ -1,9 +1,8 @@
-"""
-Problem-size check for the zoo ordering.
+"""Problem-size check for the zoo ordering.
 
-Verifies that the zoo-map ordering (Muon ~ exact < GD < ... << Adam) survives a second size and
-rank: 60x60, rank 5, k=60, m = 2 x dof, wd=0, small init, run to interpolation, 3 seeds. The full
-size x rank x seed ladder is Appendix C8 (GPU).
+Checks that the ordering (Muon ~ exact < GD < ... << Adam) survives a second size and rank:
+60x60, rank 5, k=60, m = 2 x dof, wd=0, small init, run to interpolation, 3 seeds. The full
+size x rank x seed ladder is Appendix D.9 (GPU).
 """
 from __future__ import annotations
 import math, time

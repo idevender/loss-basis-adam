@@ -1,10 +1,9 @@
-"""
-Anisotropy dial and FlowAdam-p at scale (Appendix C8).
+"""Anisotropy dial and FlowAdam-p at scale (Appendix D.9).
 
-Adam-p (RMS shared-scalar convention, the paper's dial) at p in {1, .75, .5, .25, 0} on the zoo task
-at n in {40 (10 seeds), 128 (5 seeds)}; optional FlowAdam-p rows (--flowadam) replicate the repair
-(global-norm clip c=10, Euler flow, precond_scalar='rms') on GPU. lr is tuned per (p, n) from a small
-grid by the collector-side rule.
+Adam-p under the RMS convention at p in {1, .75, .5, .25, 0} on the zoo task, n=40 with 10 seeds
+and n=128 with 5. With --flowadam it also runs the FlowAdam-p rows (global-norm clip c=10, Euler
+flow, precond_scalar='rms') on GPU. lr is tuned per (p, n) from a small grid by the
+collector-side rule.
 """
 from __future__ import annotations
 

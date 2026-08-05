@@ -1,16 +1,12 @@
-"""
-Matrix-sensing restoration testbed (shared).
+"""Matrix-sensing testbed, shared across the sensing experiments.
 
-Defines the wd=0 matrix-sensing task and helpers used across the sensing-task experiments. In the
-under-determined recovery regime many factorizations interpolate the measurements; only an optimizer
-with a low-rank implicit bias recovers the true X*. Gradient flow on the factored loss reaches the
-min-nuclear-norm solution and recovers; Adam's diagonal preconditioner damages that bias and
-converges to a higher-rank interpolant.
+X* = U* V*^T (n x n, rank r*) with m Gaussian measurements y_i = <A_i, X*>. The model is the
+overparameterized factorization W = U V^T, k >= r* columns, small init, wd=0, loss
+mean_i (<A_i, W> - y_i)^2. Many factorizations interpolate, so the metric that separates
+optimizers is recovery of the planted target, ||W - X*||_F / ||X*||_F, reported with nuclear
+norm and effective rank.
 
-Setup: X* = U* V*^T (n x n, rank r*), m random Gaussian measurements y_i = <A_i, X*>; overparam
-factored model W = U V^T with k >= r* columns, small init, loss mean_i (<A_i, W> - y_i)^2, wd=0.
-Every method is run to interpolation with final train loss reported and lr tuned per optimizer; the
-metric is ground-truth recovery ||W - X*||_F / ||X*||_F, alongside nuclear norm and effective rank.
+Each method runs to interpolation at its own tuned lr, with the final train loss reported.
 """
 
 import numpy as np
