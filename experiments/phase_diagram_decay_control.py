@@ -1,11 +1,8 @@
 """Schedule control for the phase diagram (Appendix D.1).
 
-In muon_phase_diagram.py only Muon gets cosine decay; GD, Adam and Shampoo run at constant lr.
-This re-runs the tail sweep with decay given to every method as a second row, plus Muon without
-decay, and checks whether the Muon-vs-GD crossing tau* moves and whether Adam stays worst at
-every tau.
-
-Reuses muon_phase_diagram.run via module-global override.
+muon_phase_diagram.py gives cosine decay to Muon alone. This re-runs the sweep with decay for
+every method, and Muon without it, to see whether tau* moves. Reuses muon_phase_diagram.run via
+module-global override.
 """
 from __future__ import annotations
 import os, sys, time

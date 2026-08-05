@@ -1,12 +1,8 @@
 """Anisotropy dial, fixed-learning-rate arm (Section 7).
 
-precond_dial_scalar_check.py re-selects the lr at each p, so its monotonicity is a statement
-about a best-achievable envelope. This arm drops the selection: the sweep p in {1, .75, .5,
-.25, 0} is re-run at every lr of the same grid, with only p varying inside a row.
-
-Protocol as in the RMS dial: wd=0, interpolation bar train < 1e-7 checked every 200 steps,
-30k-step budget, 3 paired seeds, sensing 40x40 rank 3, m = 2 x dof, rms scalar. The update rule
-is imported from precond_dial_scalar_check.run_adam_p.
+precond_dial_scalar_check.py re-selects the lr at each p, so its curve is an envelope. This arm
+re-runs the p sweep at every lr of the grid instead, varying only p. The update rule is imported
+from precond_dial_scalar_check.run_adam_p.
 """
 
 import numpy as np

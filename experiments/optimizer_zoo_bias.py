@@ -1,11 +1,8 @@
 """Optimizer-zoo geometry map (Section 5).
 
-Runs nine optimizers on the factored sensing task and reports which of them keep gradient
-descent's low-rank bias. Testbed: wd=0, 40x40 rank 3, k=40, m = 2 x dof, init 1e-3, run to
-interpolation, 3 seeds. Metrics: recovery, effective rank, balancedness ||U^T U - V^T V||_F.
-
-Writes every (method, lr, seed) run to logs/optimizer_zoo_bias.jsonl, which make_figures.py
-reads for Figure 1 and Table 2.
+Runs nine optimizers on the factored sensing task and reports which keep gradient descent's
+low-rank bias. Writes every (method, lr, seed) run to logs/optimizer_zoo_bias.jsonl, which
+make_figures.py reads for Figure 1 and Table 2.
 """
 from __future__ import annotations
 import json, math, os, sys, time

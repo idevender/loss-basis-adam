@@ -1,9 +1,7 @@
 """Interpolation control for the FlowAdam-p result (Section 10, Appendix D.8).
 
-The FlowAdam-p winner fits to a shallower train loss than the dial-alone baseline, which could
-be implicit early stopping. This runs the selected configuration (p=0, rms, global-norm clip
-c=10, lr=1e-3) to a 120k-step budget, recording (train, recovery, effective rank) at
-checkpoints, so the claim can be stated at the strict 1e-7 bar or its floor reported.
+Runs the selected config to 120k steps, recording (train, recovery, effective rank) at
+checkpoints, so the result can be stated at the strict 1e-7 bar rather than a shallower fit.
 """
 import sys, os, time
 import numpy as np

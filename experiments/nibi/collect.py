@@ -3,12 +3,9 @@
 Usage:
     python collect.py --dir ../nibi_results --md ../nibi_results/SUMMARY.md
 
-Applies the paper's selection rules. Zoo and phase sweeps: best lr is the interpolating one
-(mean train < 1e-7 over the selection seeds) with lowest mean recovery, reported alongside the
-cosine-all control, with the equivariant/coordinate-wise split checked. Dial: best lr per (n, p)
-with a monotonicity check along p. Attention: gauge and noise drift ranges per configuration
-with the conservative structural ratio. Pavia and Indian Pines: the train-only lr rule (deepest
-common level, ties by fewest steps) with the 4-seed matched-loss table and full lr transparency.
+Applies the paper's selection rule per experiment: interpolating lr with lowest recovery for the
+zoo and phase sweeps, best lr per (n, p) with a monotonicity check for the dial, drift ranges for
+attention, and the train-only rule for Pavia and Indian Pines.
 """
 from __future__ import annotations
 

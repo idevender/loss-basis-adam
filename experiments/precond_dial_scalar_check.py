@@ -1,15 +1,8 @@
 """Anisotropy dial, scalar-convention check (Section 7).
 
-The dial Adam-p uses denom_i = s_i^p * sbar^(1-p), s_i = sqrt(vhat_i), sbar a shared scalar.
-Two conventions for sbar:
-  'rms'     = sqrt(mean(vhat)), a function of ||G||_F alone and so exactly gauge-invariant;
-              its p=0 endpoint is the zoo's equivariant scalar-Adam.
-  'geomean' = exp(mean(log s_i)), the legacy convention, invariant only in the flow limit.
-The paper uses 'rms'. This runs the dial under both to show the mechanism does not depend on
-the choice.
-
-Protocol: wd=0, run to interpolation (train < 1e-7), lr tuned per (p, scalar) by best recovery
-among interpolating rates, 3 paired seeds, sensing 40x40 rank 3, m = 2 x dof.
+denom_i = s_i^p * sbar^(1-p). Runs the dial under both conventions for the shared scalar: 'rms'
+(sqrt(mean vhat), exactly gauge-invariant, the paper's choice) and 'geomean' (exp(mean(log s_i)),
+legacy, invariant only in the flow limit).
 """
 
 import numpy as np

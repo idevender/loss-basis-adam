@@ -1,9 +1,8 @@
 """Anisotropy dial and FlowAdam-p at scale (Appendix D.9).
 
-Adam-p under the RMS convention at p in {1, .75, .5, .25, 0} on the zoo task, n=40 with 10 seeds
-and n=128 with 5. With --flowadam it also runs the FlowAdam-p rows (global-norm clip c=10, Euler
-flow, precond_scalar='rms') on GPU. lr is tuned per (p, n) from a small grid by the
-collector-side rule.
+Adam-p under the RMS convention at p in {1, .75, .5, .25, 0}. With --flowadam it also runs the
+FlowAdam-p rows (global-norm clip c=10, Euler flow, precond_scalar='rms'). lr is tuned per (p, n)
+by the collector-side rule.
 """
 from __future__ import annotations
 

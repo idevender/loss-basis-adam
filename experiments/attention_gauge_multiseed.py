@@ -1,12 +1,7 @@
-"""Attention gauge across seeds, gauge draws, and noise scales (Appendix D.5).
+"""Attention gauge across seeds, gauge draws and noise scales (Appendix D.5).
 
-Repeats the attention twins over several init seeds and gauge draws, and adds noise-twin
-controls at perturbation scales 1e-7 and 1e-5 to bound Adam's chaos sensitivity: for a
-structural reading the gauge split has to sit orders of magnitude above the noise split.
-Equivariant methods stay at the float floor throughout; Muon's gauge and noise twins track
-each other.
-
-Model and protocol are imported from attention_gauge.py; only the seeds vary.
+Repeats attention_gauge.py's twins over more seeds and gauge draws, plus noise twins at 1e-7 and
+1e-5 to bound Adam's chaos sensitivity. Model and protocol are imported; only the seeds vary.
 """
 from __future__ import annotations
 import os, sys, time

@@ -1,9 +1,7 @@
-"""Second real dataset: Pavia University hyperspectral completion (Section 9, Appendix D.9).
+"""Pavia University hyperspectral completion (Section 9, Appendix D.9).
 
-Runs the matched-train-loss protocol on GPU in float64 for Pavia University and, in the same
-harness, Indian Pines, recording the full (kind x lr x seed x density) trajectory per run. The
-train-only lr rule (deepest level, then fewest steps), the main tables and the lr-transparency
-table for both datasets are applied by collect.py.
+Runs the matched-train-loss protocol on GPU for Pavia University and, in the same harness, Indian
+Pines. Selection rules and the tables are applied by collect.py.
 """
 from __future__ import annotations
 

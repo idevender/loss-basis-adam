@@ -1,13 +1,7 @@
 """Earlier hyperspectral matched-train-loss protocol.
 
-Records the full (train, test, effective rank) trajectory and compares methods at matched
-train-loss levels, so held-out differences reflect the interpolant rather than early stopping.
-Also measures Muon's spectral-tail behaviour on real data, where effective rank inflates even
-though it recovers exactly on exact-low-rank synthetic targets, the regime dependence Section 8
-formalizes.
-
-This fixed-lr, two-seed version is kept for protocol comparison. hyperspectral_wilson_v3.py is
-the canonical CPU reproduction.
+Records the full (train, test, effective rank) trajectory and compares at matched train loss.
+Fixed-lr and two seeds, kept for protocol comparison; hyperspectral_wilson_v3.py is canonical.
 """
 from __future__ import annotations
 import math, os, sys, time

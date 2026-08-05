@@ -1,8 +1,7 @@
 """Learning-rate sensitivity of the zoo split (Section 5, Appendix D.2).
 
-Prints recovery, effective rank and train loss at every lr of a dense grid for the five main
-methods, so the split can be read without a selection rule: at the gradient-flow limit, the
-smallest interpolating lr, the equivariant methods recover and Adam does not.
+Recovery, effective rank and train loss at every lr of a dense grid, so the split can be read
+without a selection rule.
 """
 from __future__ import annotations
 import os, sys, time

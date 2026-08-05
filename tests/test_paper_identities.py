@@ -1,15 +1,8 @@
 """Numerical verification of the paper's algebraic claims.
 
-Each test names the paper object it checks, evaluates both sides of the claimed identity in
-float64 at random points, and asserts agreement at machine precision. Nothing is mocked or
-compared against a hand-copied constant: every number comes from a real loss, real autograd
-gradients and the real update rules, with Muon's Newton-Schulz iteration and Shampoo's inverse
-roots imported from the experiment code behind the paper's tables.
-
-Every positive claim is paired with a negative control that has to fail the same check. That is
-what rules out a vacuous pass: a harness bug making the two runs identical (Q = I, a dead
-gradient, a no-op update) would satisfy the equivariance tests, but the coordinate-wise tests
-assert a large violation and would catch it.
+Each test names the paper object it checks and evaluates both sides of the identity in float64 at
+random points. Every positive claim is paired with a negative control that has to fail the same
+check.
 
 Run:  pytest -q tests/test_paper_identities.py
   or: python tests/test_paper_identities.py

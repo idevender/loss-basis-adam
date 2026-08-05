@@ -1,11 +1,8 @@
-"""Indian Pines at matched training loss, with train-only lr selection (Section 9, Appendix D.6).
+"""Indian Pines at matched training loss, train-only lr selection (Section 9, Appendix D.6).
 
-Hardens the matched-loss protocol against two confounds. Learning rates are picked per method
-and density by a train-only rule (the lr reaching the deepest matched train level, ties by
-fewest steps, selection seeds {42, 123}), which removes test-selection leakage; and a GD
-transparency table reports GD at every grid lr, so the effect is not an edge-of-stability
-artifact. Seeds {456, 789} are then added at the selected lr for a 4-seed table. Reuses
-hyperspectral_wilson_v2.run_traj; wd=0 throughout.
+Learning rates are chosen per method and density from train statistics alone (deepest matched
+level, ties by fewest steps, selection seeds {42, 123}), then seeds {456, 789} are added at the
+selected rate. Reuses hyperspectral_wilson_v2.run_traj.
 """
 from __future__ import annotations
 import os, sys, time

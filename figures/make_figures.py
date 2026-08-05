@@ -1,12 +1,8 @@
-"""Generate the paper figures.
+"""Generate Figures 1-4 as vector PDFs.
 
-Renders the attention-gauge, dial, phase-diagram and zoo-map figures as vector PDFs, on a
-colorblind-safe palette with one fixed hue per entity and serif type matched to the paper body.
-The dial uses the RMS convention, the one that is exactly equivariant at p=0. The zoo map
-recomputes Table 2's selection from logs/optimizer_zoo_bias.jsonl; the other three carry their
-run's numbers inline, each labelled with the archived file it came from.
-
-Writes the PDFs into this directory; copy them into the paper tree when they change.
+The zoo map recomputes Table 2's selection from logs/optimizer_zoo_bias.jsonl; the other three
+carry their run's numbers inline, each labelled with the archived file it came from. Copy the
+PDFs into the paper tree when they change.
 
 Run: python make_figures.py
 """

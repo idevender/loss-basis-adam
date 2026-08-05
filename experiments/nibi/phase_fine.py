@@ -1,9 +1,7 @@
 """Spectral-tail phase diagram at scale (Appendix D.9).
 
-Refines Section 8's diagram: tau from 0 to 0.6 in steps of 0.05 with extra points near the
-crossing, 10 seeds at n=40 plus an n=128 arm and a scalar-Adam row, to show tau* is not an
-artifact of small size. Every cell is recorded; collect.py applies the selection rule per
-(method, tau).
+Refines Section 8's diagram with extra points near the crossing, an n=128 arm and a scalar-Adam
+row. collect.py applies the selection rule per (method, tau).
 """
 from __future__ import annotations
 

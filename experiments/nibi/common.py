@@ -1,16 +1,8 @@
 """Shared core for the H100 replication ladder (Appendix D.9).
 
-Ports the CPU protocols (optimizer_zoo_bias.py, muon_phase_diagram.py,
-precond_dial_scalar_check.py) to device- and dtype-agnostic code, holding to the CPU runs on
-four points:
-  * Problem instances come from CPU float32 generators, the same bits as the n=40 CPU runs,
-    then cast to the run dtype and moved to the device; dynamics default to float64.
-  * Optimizer updates are literal ports of the CPU implementations.
-  * Protocol constants match the paper: loss = mean_i(<A_i,W>-y_i)^2, wd=0, interpolation bar
-    1e-7 checked every 200 steps, init 1e-3, k=n, cosine decay for {muon, signum, lion} under
-    the 'protocol' schedule or for every method under 'cosine-all' (Appendix D.1).
-  * Dial (Adam-p): denom_i = (s_i+eps)^p * (sbar+eps)^(1-p), s_i = sqrt(vhat_i),
-    sbar = sqrt(mean vhat) (RMS, gauge-invariant); p=1 is stock Adam, p=0 scalar-Adam.
+Device- and dtype-agnostic ports of the CPU protocols. Problem instances come from CPU float32
+generators, the same bits as the n=40 CPU runs, then cast to the run dtype and moved to the
+device; dynamics default to float64. Optimizer updates are literal ports of the CPU code.
 
 Results append as JSON lines and every driver is resume-safe.
 """

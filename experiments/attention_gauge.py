@@ -1,13 +1,8 @@
 """Attention-head gauge experiment (Section 6).
 
-A head's QK^T factorization carries the same symmetry as UV^T: for per-head orthogonal A_h,
-sending W_Q^h -> A_h W_Q^h and W_K^h -> A_h W_K^h leaves the logits unchanged on every input.
-Two such initializations are the same function to a gauge-equivariant optimizer, while Adam
-reads the basis and the runs split in function space.
-
-Protocol: mod-47 addition transformer, 2 layers, 4 heads, d=64, no qk-norm so the gauge is
-exact; full-batch, deterministic CPU, identical data order. An A=I twin is the float-noise
-control. Metrics: relative logit drift, per-layer QK^T drift, validation accuracy of both copies.
+A per-head orthogonal A_h sending W_Q -> A_h W_Q and W_K -> A_h W_K leaves the logits unchanged,
+so two such initializations are the same function. Trains both copies and measures logit drift,
+per-layer QK^T drift and validation accuracy. The A=I twin is the float-noise control.
 """
 from __future__ import annotations
 import math, os, sys, time

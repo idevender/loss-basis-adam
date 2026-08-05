@@ -1,12 +1,7 @@
-"""Matrix-sensing testbed, shared across the sensing experiments.
+"""Matrix-sensing testbed, shared across the sensing experiments (Section 3).
 
-X* = U* V*^T (n x n, rank r*) with m Gaussian measurements y_i = <A_i, X*>. The model is the
-overparameterized factorization W = U V^T, k >= r* columns, small init, wd=0, loss
-mean_i (<A_i, W> - y_i)^2. Many factorizations interpolate, so the metric that separates
-optimizers is recovery of the planted target, ||W - X*||_F / ||X*||_F, reported with nuclear
-norm and effective rank.
-
-Each method runs to interpolation at its own tuned lr, with the final train loss reported.
+X* = U* V*^T with m Gaussian measurements, overparameterized model W = U V^T, wd=0. The metric
+that separates optimizers is recovery of the planted target, ||W - X*||_F / ||X*||_F.
 """
 
 import numpy as np

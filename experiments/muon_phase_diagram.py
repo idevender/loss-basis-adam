@@ -1,13 +1,8 @@
 """Spectral-tail phase diagram (Section 8).
 
-Sweeps the target's spectral-tail mass to reconcile Muon's two regimes: near-exact recovery on
-exact low-rank sensing, worst generalization once the target has a tail. The target is
-X = sqrt(1-tau^2) X3 + tau E_perp, with X3 rank-3 planted and E_perp full-rank, projected
-orthogonal to X3 and scaled to ||X3||_F, so tau^2 is the tail's share of target energy.
-m = 2 x dof(3) measurements of the full X, wd=0, small init, run to interpolation.
-
-As tau grows Muon degrades fastest and crosses GD at a boundary tau*, while GD keeps fitting
-head-first and Adam stays worst throughout.
+Sweeps the target's tail mass: X = sqrt(1-tau^2) X3 + tau E_perp, with X3 rank-3 planted and
+E_perp projected orthogonal to it, so tau^2 is the tail's share of target energy. Muon degrades
+fastest as tau grows and crosses GD at a boundary tau*.
 """
 from __future__ import annotations
 import math, os, sys, time

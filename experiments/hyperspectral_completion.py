@@ -1,12 +1,8 @@
 """Earlier hyperspectral completion loader and CPU smoke test.
 
-Loads the Indian Pines cube (rows = pixels, columns = bands), removes band means, masks entries
-and runs dense low-rank-residual completion. Supplies the load_matrix and make_split helpers the
-matched-loss demos reuse. Arms: Adam with optimizer weight decay, Adam with the same L2 in the
-loss, softened Adam without flow, FlowAdam, and FlowAdam with the softened preconditioner.
-
-Selects on held-out RMSE at density 0.50, so it is a loader and smoke test rather than a source
-of paper results. hyperspectral_wilson_v3.py is the canonical CPU reproduction.
+Supplies the load_matrix and make_split helpers the matched-loss demos reuse. Selects on held-out
+RMSE, so it is a loader and smoke test rather than a source of paper results;
+hyperspectral_wilson_v3.py is canonical.
 """
 from __future__ import annotations
 

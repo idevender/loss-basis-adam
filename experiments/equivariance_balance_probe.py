@@ -1,9 +1,7 @@
 """Equivariance and balancedness probe (Section 7).
 
-Two runs start from the same W0 but a different latent gauge. The probe measures product drift
-||W_base - W_gauge|| / ||W_base||, the recovery and effective-rank gaps, and the balancedness
-invariant ||U^T U - V^T V||_F. Equivariant methods give near-zero drift; Adam drifts and lands
-at worse rank and recovery, because its second-moment buffers live in the factor coordinates.
+Two runs from the same W0 but a different latent gauge. Measures product drift, the recovery and
+effective-rank gaps, and the balancedness invariant ||U^T U - V^T V||_F.
 """
 from __future__ import annotations
 

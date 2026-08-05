@@ -1,10 +1,9 @@
 """Post-ladder diagnostics (Appendix D.9).
 
-A) signum horizon-dependence: n in {40, 128}, cosine horizon in {20k, 40k, 80k} plus a
-   constant-lr control, with (recovery, effective rank, balancedness, train) every 500 steps.
-B) budget arm: GD / adam_p0rms / adam at n in {128, 256}, one lr notch below the ladder's edge
-   selection, budget 150k, to test whether the equivariant rows' degradation with n is flow-limit
-   truncation at the 40k cap.
+A) signum horizon-dependence: n in {40, 128}, cosine horizon in {20k, 40k, 80k}, plus a
+   constant-lr control.
+B) budget arm: GD / adam_p0rms / adam at n in {128, 256}, budget 150k, testing whether the
+   equivariant rows' degradation with n is truncation at the 40k cap.
 """
 from __future__ import annotations
 

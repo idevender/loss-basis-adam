@@ -1,9 +1,8 @@
 """Figure 5: the matched-training-loss trajectory on Indian Pines (Section 9).
 
-Reads the file that produced Table 5 (experiments/nibi_results/indianpines_gpu.jsonl, the GPU
-float64 run), re-applies the train-only lr rule of Appendix D.6, and checks that every number
-the paper prints comes back out before anything is plotted. If an assertion fires, no figure is
-written, so a fresh figure cannot quietly disagree with a published table.
+Reads the file behind Table 5 (experiments/nibi_results/indianpines_gpu.jsonl), re-applies the
+train-only lr rule of Appendix D.6, and asserts the published numbers before plotting. If an
+assertion fires, no figure is written.
 
 Usage: python figures/make_realdata_trajectory.py
 """

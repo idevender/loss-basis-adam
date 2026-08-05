@@ -1,8 +1,7 @@
 """Initialization-scale robustness of the zoo split (Appendix D.4).
 
-The low-rank bias is an init-to-zero phenomenon and the zoo ran at init=1e-3. This runs the five
-main methods at init in {1e-3, 3e-3, 1e-2} under the same protocol. Absolute recovery degrades
-as init grows; the question is whether the equivariant/coordinate-wise split persists at each.
+The five main methods at init in {1e-3, 3e-3, 1e-2}. Absolute recovery degrades as init grows;
+the question is whether the split persists at each.
 """
 from __future__ import annotations
 import os, sys, time
