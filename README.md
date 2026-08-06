@@ -2,6 +2,9 @@
 
 Code for the paper of the same name, by Devender Singh.
 
+**Paper:** [arXiv:2608.05136](https://arxiv.org/abs/2608.05136) — **Project page:**
+[idevender.github.io](https://idevender.github.io/) — **Questions:** devenders@mun.ca
+
 A factored loss `L(UV^T)` does not change when you rotate both factors: `(U, V) -> (UQ, VQ)` for
 orthogonal `Q`. Gradient descent respects that symmetry; Adam does not. The experiments here test
 what follows. Equivariant methods (GD, momentum, shared-scalar Adam, Muon, Shampoo) keep gradient
@@ -20,6 +23,20 @@ pip install -r requirements.txt
 
 Python 3.9+. Each CPU experiment takes a few laptop-minutes. The replication ladder in
 `experiments/nibi/` needs a GPU.
+
+## Start here
+
+The headline result — Figure 1 and Table 2, the optimizer zoo — runs on a laptop:
+
+```bash
+cd experiments
+python optimizer_zoo_bias.py
+```
+
+Every method runs to interpolation, so what separates them is which solution gets selected, not how
+far each one got. Per-`(method, lr, seed)` records land in `logs/optimizer_zoo_bias.jsonl`, which
+also holds the selection used by the paper. The rest of the paper's scripts are tabulated under
+[Reproducing the paper](#reproducing-the-paper).
 
 ## Layout
 
@@ -212,11 +229,14 @@ hyperspectral scenes and a character-level corpus, none of them shipped here:
 ## Citation
 
 ```bibtex
-@article{singh2026gauge,
-  title  = {The Loss Does Not See the Basis, but Adam Does},
-  author = {Singh, Devender},
-  year   = {2026},
-  note   = {Preprint}
+@article{singh2026lossbasis,
+  title         = {The Loss Does Not See the Basis, but Adam Does},
+  author        = {Singh, Devender},
+  year          = {2026},
+  eprint        = {2608.05136},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG},
+  url           = {https://arxiv.org/abs/2608.05136}
 }
 ```
 
