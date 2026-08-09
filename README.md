@@ -3,7 +3,7 @@
 Code for the paper of the same name, by Devender Singh.
 
 **Paper:** [arXiv:2608.05136](https://arxiv.org/abs/2608.05136) — **Project page:**
-[idevender.github.io](https://idevender.github.io/) — **Questions:** devenders@mun.ca
+[idevender.github.io/loss-basis-adam](https://idevender.github.io/loss-basis-adam/) — **Questions:** devenders@mun.ca
 
 A factored loss `L(UV^T)` does not change when you rotate both factors: `(U, V) -> (UQ, VQ)` for
 orthogonal `Q`. Gradient descent respects that symmetry; Adam does not. The experiments here test
