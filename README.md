@@ -229,13 +229,14 @@ hyperspectral scenes and a character-level corpus, none of them shipped here:
 ## Citation
 
 ```bibtex
-@article{singh2026lossbasis,
+@misc{singh2026lossbasis,
   title         = {The Loss Does Not See the Basis, but Adam Does},
   author        = {Singh, Devender},
   year          = {2026},
   eprint        = {2608.05136},
   archivePrefix = {arXiv},
   primaryClass  = {cs.LG},
+  note          = {arXiv:2608.05136},
   url           = {https://arxiv.org/abs/2608.05136}
 }
 ```
